@@ -1,0 +1,64 @@
+{
+  "name": "equipment-control-panel",
+  "version": "1.0.0",
+  "description": "Equipment Control Panel - Windows application for TCP equipment control with 50Hz auto-send",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --win --publish never",
+    "build:dir": "electron-builder build --win --dir"
+  },
+  "keywords": [
+    "electron",
+    "tcp",
+    "communication",
+    "control-panel",
+    "equipment"
+  ],
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.equipment.controlpanel",
+    "productName": "Equipment Control Panel",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "config.js",
+      "validation.js",
+      "settings-manager.js",
+      "data-handler.js",
+      "ui-manager.js",
+      "connection-manager.js",
+      "index.html",
+      "settings.html",
+      "styles.css",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^26.0.12"
+  }
+}

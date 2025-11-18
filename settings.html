@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Equipment Control Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container settings-container">
+        <h1>Configuration Settings</h1>
+
+        <!-- Connection Section -->
+        <div class="section connection-section">
+            <h2>Connection Settings</h2>
+            <div class="connection-controls">
+                <div class="input-group">
+                    <label for="host">Host:</label>
+                    <input type="text" id="host" value="localhost" placeholder="localhost">
+                </div>
+                <div class="input-group">
+                    <label for="port">Port:</label>
+                    <input type="number" id="port" value="8080" placeholder="8080">
+                </div>
+                <button id="connect-btn" class="btn btn-primary">Connect</button>
+                <button id="disconnect-btn" class="btn btn-secondary" disabled>Disconnect</button>
+                <span id="status-indicator" class="status-disconnected">Disconnected</span>
+                <div class="input-group auto-send-group">
+                    <label>
+                        <input type="checkbox" id="auto-send-toggle">
+                        <strong>Auto-Send (50Hz)</strong>
+                    </label>
+                    <span class="auto-send-indicator" id="auto-send-indicator">OFF</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Parameters Section -->
+        <div class="section send-section">
+            <h2>Control Parameters</h2>
+            <div class="control-layout">
+                <!-- Speed Control -->
+                <div class="control-group">
+                    <h3>Speed Control</h3>
+                    <div class="integer-input">
+                        <label for="int-0">Speed Mode:</label>
+                        <input type="number" id="int-0" value="0" min="0" max="4" title="0:Low 1:Med 2:High 3:CustomXY 4:CustomForce">
+                        <span class="unit-hint">0-4</span>
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-1">Target Speed:</label>
+                        <input type="number" id="int-1" value="15" min="0" max="65535">
+                        <span class="unit-hint">mm/s</span>
+                    </div>
+                </div>
+
+                <!-- Position Control -->
+                <div class="control-group">
+                    <h3>Position Control</h3>
+                    <div class="integer-input">
+                        <label for="int-2">Target X:</label>
+                        <input type="number" id="int-2" value="0" min="0" max="65535">
+                        <span class="unit-hint">mm</span>
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-3">Target Y:</label>
+                        <input type="number" id="int-3" value="0" min="0" max="65535">
+                        <span class="unit-hint">mm</span>
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-4">Target Z:</label>
+                        <input type="number" id="int-4" value="0" min="0" max="65535">
+                        <span class="unit-hint">mm</span>
+                    </div>
+                </div>
+
+                <!-- Operation Mode -->
+                <div class="control-group">
+                    <h3>Operation Settings</h3>
+                    <div class="integer-input">
+                        <label for="int-5">Operation Mode:</label>
+                        <input type="number" id="int-5" value="0" min="0" max="65535">
+                        <span class="unit-hint">PID Set</span>
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-6">Reserved 6:</label>
+                        <input type="number" id="int-6" value="0" min="0" max="65535">
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-7">Reserved 7:</label>
+                        <input type="number" id="int-7" value="0" min="0" max="65535">
+                    </div>
+                </div>
+
+                <!-- Communication & Control -->
+                <div class="control-group">
+                    <h3>Communication & Control</h3>
+                    <div class="integer-input">
+                        <label for="int-8">Comm Flag:</label>
+                        <input type="number" id="int-8" value="1234" min="0" max="65535" title="0:No Connection, 1234:Connected">
+                        <span class="unit-hint">Status</span>
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-9">Control Command:</label>
+                        <input type="number" id="int-9" value="0" min="0" max="65535" readonly>
+                        <span class="unit-hint">Cmd ID</span>
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-10">Reserved 10:</label>
+                        <input type="number" id="int-10" value="0" min="0" max="65535">
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-11">Reserved 11:</label>
+                        <input type="number" id="int-11" value="0" min="0" max="65535">
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-12">Reserved 12:</label>
+                        <input type="number" id="int-12" value="0" min="0" max="65535">
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-13">Reserved 13:</label>
+                        <input type="number" id="int-13" value="0" min="0" max="65535">
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-14">Reserved 14:</label>
+                        <input type="number" id="int-14" value="0" min="0" max="65535">
+                    </div>
+                    <div class="integer-input">
+                        <label for="int-15">Reserved 15:</label>
+                        <input type="number" id="int-15" value="0" min="0" max="65535">
+                    </div>
+                </div>
+            </div>
+            <button id="send-btn" class="btn btn-debug" disabled>Send Data (Debug)</button>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
