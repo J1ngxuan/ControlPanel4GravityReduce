@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // TCP connection methods
-    connect: (host, port) => ipcRenderer.invoke('tcp-connect', host, port),
+    connect: (host, port, clientPort) => ipcRenderer.invoke('tcp-connect', host, port, clientPort),
     disconnect: () => ipcRenderer.invoke('tcp-disconnect'),
     send: (integers) => ipcRenderer.invoke('tcp-send', integers),
     sendCommand: (commandId) => ipcRenderer.invoke('tcp-send-command', commandId),

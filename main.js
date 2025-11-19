@@ -103,7 +103,7 @@ app.on('window-all-closed', function () {
 });
 
 // TCP Connection Handler
-ipcMain.handle('tcp-connect', async (event, host, port) => {
+ipcMain.handle('tcp-connect', async (event, host, port, clientPort) => {
     return new Promise((resolve, reject) => {
         if (tcpClient) {
             tcpClient.destroy();
@@ -111,9 +111,22 @@ ipcMain.handle('tcp-connect', async (event, host, port) => {
 
         tcpClient = new net.Socket();
 
-        tcpClient.connect(port, host, () => {
+        // Set up connection options
+        const connectionOptions = {
+            port: port,
+            host: host
+        };
+
+        // Only set localPort if clientPort is specified (non-zero)
+        if (clientPort && clientPort > 0) {
+            connectionOptions.localPort = clientPort;
+            console.log('Binding to client port:', clientPort);
+        }
+
+        tcpClient.connect(connectionOptions, () => {
             isConnected = true;
-            console.log('Connected to TCP server:', host, port);
+            const clientPortMsg = clientPort > 0 ? ` (client port: ${clientPort})` : '';
+            console.log(`Connected to TCP server: ${host}:${port}${clientPortMsg}`);
             // Send status to all windows
             BrowserWindow.getAllWindows().forEach(win => {
                 win.webContents.send('connection-status', { connected: true });

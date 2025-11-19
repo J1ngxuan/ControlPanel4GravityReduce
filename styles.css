@@ -242,6 +242,71 @@ body {
     cursor: pointer;
 }
 
+.latency-input-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.latency-input {
+    width: 60px;
+    padding: 4px 6px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--bg-input);
+    border: 1px solid var(--border-primary);
+    border-radius: 3px;
+    text-align: right;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.latency-input:hover {
+    background: var(--bg-hover);
+}
+
+.latency-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.unit-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.debug-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 15px;
+    border-left: 1px solid var(--border-primary);
+}
+
+.debug-controls label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.debug-info {
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    padding: 2px 8px;
+    border-radius: 3px;
+    transition: color 0.3s, background-color 0.3s;
+}
+
+.debug-info span {
+    color: var(--info-text);
+    font-weight: bold;
+    margin: 0 2px;
+}
+
 .settings-container {
     max-width: 100%;
     margin: 20px;

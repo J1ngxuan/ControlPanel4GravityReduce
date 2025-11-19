@@ -61,9 +61,20 @@
             <div class="auto-send-controls">
                 <label>
                     <input type="checkbox" id="auto-send-toggle">
-                    <span class="status-label" data-i18n="autoSend50Hz">Auto-Send (50Hz)</span>
+                    <span class="status-label">Auto-Send</span>
                 </label>
+                <div class="latency-input-group">
+                    <input type="number" id="send-latency" class="latency-input" value="20" min="1" max="10000" placeholder="20">
+                    <span class="unit-label">ms</span>
+                </div>
                 <span id="auto-send-indicator" class="auto-send-indicator">OFF</span>
+            </div>
+            <div class="debug-controls">
+                <label>
+                    <input type="checkbox" id="debug-mode-toggle">
+                    <span class="status-label">Debug Echo</span>
+                </label>
+                <span class="debug-info">RX[9]:<span id="debug-rx-value">--</span> TX[6]:<span id="debug-tx-value">--</span></span>
             </div>
         </div>
 

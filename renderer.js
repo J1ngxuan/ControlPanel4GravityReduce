@@ -1,6 +1,7 @@
 // DOM Elements
 const hostInput = document.getElementById('host');
 const portInput = document.getElementById('port');
+const clientPortInput = document.getElementById('client-port');
 const connectBtn = document.getElementById('connect-btn');
 const disconnectBtn = document.getElementById('disconnect-btn');
 const sendBtn = document.getElementById('send-btn');
@@ -10,13 +11,22 @@ const statusIndicator = document.getElementById('status-indicator');
 const boolDisplay = document.getElementById('bool-display');
 const intDisplay = document.getElementById('int-display');
 const logContainer = document.getElementById('log');
+const debugModeToggle = document.getElementById('debug-mode-toggle');
+const debugRxValue = document.getElementById('debug-rx-value');
+const debugTxValue = document.getElementById('debug-tx-value');
+const sendLatencyInput = document.getElementById('send-latency');
 
 let isConnected = false;
 let autoSendInterval = null;
-const AUTO_SEND_RATE = 50; // 50Hz = 20ms interval
+let sendLatencyMs = 20; // Default 20ms interval, can be manually changed by user
 let currentCommand = 0; // Track current command value for int-9
 let waitingForAcknowledgment = false; // Track if we're waiting for PLC acknowledgment
 let acknowledgedCommand = 0; // Track the last acknowledged command for joystick/slider
+
+// Debug mode state
+let debugModeEnabled = false;
+let lastReceivedDebugInt = null; // The 10th received int (index 9)
+let lastSentDebugInt = null; // The 7th sent int (index 6) before the last reception
 
 // Joystick and slider control variables
 let joystickCanvas = null;
@@ -41,6 +51,11 @@ function loadSettings() {
         if (savedPort) portInput.value = savedPort;
     }
 
+    if (clientPortInput) {
+        const savedClientPort = localStorage.getItem('tcp-client-port');
+        if (savedClientPort) clientPortInput.value = savedClientPort;
+    }
+
     // Load integer parameters (int-0 through int-15)
     for (let i = 0; i < 16; i++) {
         const input = document.getElementById(`int-${i}`);
@@ -59,6 +74,24 @@ function loadSettings() {
             autoSendToggle.checked = savedAutoSend === 'true';
         }
     }
+
+    // Load debug mode toggle state
+    if (debugModeToggle) {
+        const savedDebugMode = localStorage.getItem('debug-mode-enabled');
+        if (savedDebugMode !== null) {
+            debugModeToggle.checked = savedDebugMode === 'true';
+            debugModeEnabled = savedDebugMode === 'true';
+        }
+    }
+
+    // Load send latency setting
+    if (sendLatencyInput) {
+        const savedLatency = localStorage.getItem('send-latency-ms');
+        if (savedLatency !== null) {
+            sendLatencyInput.value = savedLatency;
+            sendLatencyMs = parseInt(savedLatency);
+        }
+    }
 }
 
 // Save settings to localStorage
@@ -72,6 +105,10 @@ function saveSettings() {
         localStorage.setItem('tcp-port', portInput.value);
     }
 
+    if (clientPortInput) {
+        localStorage.setItem('tcp-client-port', clientPortInput.value);
+    }
+
     // Save integer parameters (int-0 through int-15)
     for (let i = 0; i < 16; i++) {
         const input = document.getElementById(`int-${i}`);
@@ -83,6 +120,16 @@ function saveSettings() {
     // Save auto-send toggle state
     if (autoSendToggle) {
         localStorage.setItem('auto-send-enabled', autoSendToggle.checked.toString());
+    }
+
+    // Save debug mode toggle state
+    if (debugModeToggle) {
+        localStorage.setItem('debug-mode-enabled', debugModeToggle.checked.toString());
+    }
+
+    // Save send latency setting
+    if (sendLatencyInput) {
+        localStorage.setItem('send-latency-ms', sendLatencyInput.value);
     }
 }
 
@@ -243,20 +290,22 @@ if (connectBtn) {
     connectBtn.addEventListener('click', async () => {
         const host = hostInput.value.trim();
         const port = parseInt(portInput.value);
+        const clientPort = clientPortInput ? parseInt(clientPortInput.value) || 0 : 0;
 
         if (!host || !port) {
             addLog('Please enter valid host and port', 'error');
             return;
         }
 
-        addLog(`Connecting to ${host}:${port}...`, 'info');
+        const clientPortMsg = clientPort > 0 ? ` (client port: ${clientPort})` : '';
+        addLog(`Connecting to ${host}:${port}${clientPortMsg}...`, 'info');
         connectBtn.disabled = true;
 
         // Save connection settings
         saveSettings();
 
         try {
-            const result = await window.electronAPI.connect(host, port);
+            const result = await window.electronAPI.connect(host, port, clientPort);
             if (result.success) {
                 updateConnectionStatus(true);
             } else {
@@ -276,13 +325,14 @@ function startAutoSend() {
 
     autoSendInterval = setInterval(async () => {
         await sendIntegerData();
-    }, 1000 / AUTO_SEND_RATE);
+    }, sendLatencyMs);
 
     if (autoSendIndicator) {
         autoSendIndicator.textContent = 'ON';
         autoSendIndicator.className = 'auto-send-indicator active';
     }
-    addLog('Auto-send started at 50Hz (20ms interval)', 'success');
+    const frequency = (1000 / sendLatencyMs).toFixed(1);
+    addLog(`Auto-send started at ${sendLatencyMs}ms interval (~${frequency}Hz)`, 'success');
 }
 
 // Stop auto-send function
@@ -327,6 +377,61 @@ if (autoSendToggle) {
     });
 }
 
+// Debug mode toggle
+if (debugModeToggle) {
+    debugModeToggle.addEventListener('change', () => {
+        debugModeEnabled = debugModeToggle.checked;
+        saveSettings(); // Save the toggle state
+
+        if (debugModeEnabled) {
+            addLog('Debug echo mode enabled: RX[9] → TX[6]', 'info');
+        } else {
+            addLog('Debug echo mode disabled', 'info');
+            // Clear debug display values
+            if (debugRxValue) debugRxValue.textContent = '--';
+            if (debugTxValue) debugTxValue.textContent = '--';
+        }
+    });
+}
+
+// Send latency input handler
+if (sendLatencyInput) {
+    sendLatencyInput.addEventListener('change', () => {
+        const newLatency = parseInt(sendLatencyInput.value);
+
+        // Validate latency value
+        if (isNaN(newLatency) || newLatency < 1 || newLatency > 10000) {
+            addLog('Invalid latency value. Must be between 1-10000 ms', 'error');
+            sendLatencyInput.value = sendLatencyMs; // Restore previous value
+            return;
+        }
+
+        const wasRunning = autoSendInterval !== null;
+
+        // Stop auto-send if running
+        if (wasRunning) {
+            stopAutoSend();
+        }
+
+        // Update latency
+        sendLatencyMs = newLatency;
+        saveSettings(); // Save the latency setting
+
+        const frequency = (1000 / sendLatencyMs).toFixed(1);
+        addLog(`Send latency changed to ${sendLatencyMs}ms (~${frequency}Hz)`, 'info');
+
+        // Restart auto-send if it was running and we're in main window
+        if (wasRunning && isMainWindow() && isConnected) {
+            startAutoSend();
+        }
+    });
+
+    // Also handle on blur to update when user clicks away
+    sendLatencyInput.addEventListener('blur', () => {
+        sendLatencyInput.dispatchEvent(new Event('change'));
+    });
+}
+
 // Function to collect and send integer data
 async function sendIntegerData() {
     if (!isConnected) {
@@ -345,6 +450,13 @@ async function sendIntegerData() {
             if (input) {
                 input.value = currentCommand; // Update display if element exists
             }
+        } else if (i === 6 && debugModeEnabled && lastReceivedDebugInt !== null) {
+            // Int-6 in debug mode - use the last received debug int (RX[9])
+            value = lastReceivedDebugInt;
+            const input = document.getElementById(`int-${i}`);
+            if (input) {
+                input.value = lastReceivedDebugInt; // Update display if element exists
+            }
         } else {
             const input = document.getElementById(`int-${i}`);
             if (input) {
@@ -359,6 +471,11 @@ async function sendIntegerData() {
         // Ensure value is within 16-bit unsigned range (0-65535)
         const clampedValue = Math.max(0, Math.min(65535, value));
         integers.push(clampedValue);
+
+        // Store the sent debug int value (before we receive the next packet)
+        if (i === 6 && debugModeEnabled) {
+            lastSentDebugInt = clampedValue;
+        }
 
         if (value !== clampedValue && i !== 9) {
             const input = document.getElementById(`int-${i}`);
@@ -754,6 +871,20 @@ window.electronAPI.onDataReceived((data) => {
         if (plcAcknowledgedCommand !== 0 && plcAcknowledgedCommand === currentCommand) {
             handleCommandAcknowledgment(plcAcknowledgedCommand);
         }
+
+        // Debug mode: capture the 10th received int and update display
+        if (debugModeEnabled) {
+            const receivedDebugInt = data.ints[9];
+            lastReceivedDebugInt = receivedDebugInt;
+
+            // Update debug display values
+            if (debugRxValue) {
+                debugRxValue.textContent = receivedDebugInt;
+            }
+            if (debugTxValue && lastSentDebugInt !== null) {
+                debugTxValue.textContent = lastSentDebugInt;
+            }
+        }
     }
 });
 
@@ -855,6 +986,8 @@ window.addEventListener('storage', (e) => {
         hostInput.value = e.newValue;
     } else if (e.key === 'tcp-port' && portInput && e.newValue) {
         portInput.value = e.newValue;
+    } else if (e.key === 'tcp-client-port' && clientPortInput && e.newValue) {
+        clientPortInput.value = e.newValue;
     } else if (e.key === 'auto-send-enabled' && autoSendToggle && e.newValue) {
         const newCheckedState = e.newValue === 'true';
         autoSendToggle.checked = newCheckedState;
