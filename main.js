@@ -2,10 +2,12 @@
 // Check for existing windows and implement synchronization from the start.
 const { app, BrowserWindow, ipcMain } = require('electron');
 const net = require('net');
+const dgram = require('dgram');
 const path = require('path');
 let mainWindow;
 let settingsWindow = null;
 let tcpClient = null;
+let udpSocket = null;
 
 // ========== UNIFIED STATE MANAGEMENT ==========
 // Centralized application state - single source of truth
@@ -13,6 +15,17 @@ const appState = {
     connection: {
         connected: false,
         error: null
+    },
+    protocol: 'tcp', // 'tcp' or 'udp'
+    tcpSettings: {
+        host: 'localhost',
+        port: 8080,
+        clientPort: 0
+    },
+    udpSettings: {
+        listeningPort: 8081,
+        targetHost: 'localhost',
+        targetPort: 8080
     },
     theme: 'dark',
     language: 'en',
@@ -109,7 +122,7 @@ function createSettingsWindow() {
 app.whenReady().then(() => {
     createWindow();
 
-    // Load saved theme and language from localStorage after window is created
+    // Load saved settings from localStorage after window is created
     mainWindow.webContents.once('did-finish-load', () => {
         mainWindow.webContents.executeJavaScript('localStorage.getItem("theme")')
             .then(savedTheme => {
@@ -126,6 +139,15 @@ app.whenReady().then(() => {
                 }
             })
             .catch(err => console.error('Failed to load language:', err));
+
+        // Load protocol and connection settings
+        mainWindow.webContents.executeJavaScript('localStorage.getItem("protocol")')
+            .then(savedProtocol => {
+                if (savedProtocol === 'tcp' || savedProtocol === 'udp') {
+                    appState.protocol = savedProtocol;
+                }
+            })
+            .catch(err => console.error('Failed to load protocol:', err));
     });
 
     app.on('activate', function () {
@@ -134,11 +156,16 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', function () {
-    // Clean up TCP connection on app shutdown
+    // Clean up connections on app shutdown
     if (tcpClient) {
         tcpClient.removeAllListeners();
         tcpClient.destroy();
         tcpClient = null;
+    }
+    if (udpSocket) {
+        udpSocket.removeAllListeners();
+        udpSocket.close();
+        udpSocket = null;
     }
     if (process.platform !== 'darwin') app.quit();
 });
@@ -315,7 +342,7 @@ ipcMain.handle('tcp-send-command', async (event, commandId) => {
     }
 });
 
-// Disconnect handler
+// TCP Disconnect handler
 ipcMain.handle('tcp-disconnect', async () => {
     if (tcpClient) {
         try {
@@ -346,6 +373,119 @@ ipcMain.handle('tcp-disconnect', async () => {
     return { success: false, message: 'No active connection' };
 });
 
+// ========== UDP HANDLERS ==========
+// UDP Connection Handler (bind to listening port)
+ipcMain.handle('udp-connect', async (event, listeningPort, targetHost, targetPort) => {
+    return new Promise((resolve, reject) => {
+        // Clean up existing UDP socket if any
+        if (udpSocket) {
+            udpSocket.removeAllListeners();
+            udpSocket.close();
+            udpSocket = null;
+        }
+
+        udpSocket = dgram.createSocket('udp4');
+
+        // Bind to listening port to receive data
+        udpSocket.bind(listeningPort, () => {
+            console.log(`UDP socket bound to port ${listeningPort}`);
+            console.log(`UDP target: ${targetHost}:${targetPort}`);
+
+            // Update state and broadcast
+            broadcastStateChange('connection', { connected: true, error: null });
+
+            resolve({ success: true, message: 'UDP socket ready' });
+        });
+
+        // Listen for incoming UDP messages
+        udpSocket.on('message', (data, rinfo) => {
+            console.log(`Received UDP data from ${rinfo.address}:${rinfo.port}:`, data);
+            parseReceivedData(data);
+        });
+
+        // Handle errors
+        udpSocket.on('error', (err) => {
+            console.error('UDP Error:', err);
+
+            // Provide user-friendly error message for port conflicts
+            let errorMessage = err.message;
+            if (err.code === 'EADDRINUSE') {
+                errorMessage = `UDP port ${listeningPort} is already in use. Please choose a different port.`;
+            }
+
+            // Update state and broadcast
+            broadcastStateChange('connection', { connected: false, error: errorMessage });
+
+            // Clean up on error
+            if (udpSocket) {
+                udpSocket.removeAllListeners();
+                udpSocket.close();
+                udpSocket = null;
+            }
+
+            reject({ success: false, message: errorMessage });
+        });
+
+        // Handle socket close
+        udpSocket.on('close', () => {
+            console.log('UDP socket closed');
+
+            // Update state and broadcast
+            broadcastStateChange('connection', { connected: false, error: null });
+        });
+    });
+});
+
+// UDP Disconnect handler
+ipcMain.handle('udp-disconnect', async () => {
+    if (udpSocket) {
+        try {
+            udpSocket.removeAllListeners();
+            udpSocket.close();
+            udpSocket = null;
+
+            return { success: true, message: 'UDP socket closed' };
+        } catch (error) {
+            console.error('Error during UDP disconnect:', error);
+            // Force cleanup on error
+            if (udpSocket) {
+                udpSocket.removeAllListeners();
+                udpSocket.close();
+                udpSocket = null;
+            }
+            return { success: true, message: 'UDP socket closed with errors' };
+        }
+    }
+    return { success: false, message: 'No active UDP socket' };
+});
+
+// UDP Send handler
+ipcMain.handle('udp-send', async (event, integers, targetHost, targetPort) => {
+    if (!udpSocket) {
+        return { success: false, message: 'UDP socket not initialized' };
+    }
+
+    try {
+        // Convert 16 integers to bytes (32 bytes total)
+        const buffers = integers.map(int => Int2Byte(int));
+        const dataToSend = Buffer.concat(buffers);
+
+        // Send UDP datagram
+        udpSocket.send(dataToSend, targetPort, targetHost, (err) => {
+            if (err) {
+                console.error('Error sending UDP data:', err);
+            } else {
+                console.log(`Sent UDP data to ${targetHost}:${targetPort}:`, dataToSend);
+            }
+        });
+
+        return { success: true, message: 'UDP data sent' };
+    } catch (error) {
+        console.error('Error sending UDP data:', error);
+        return { success: false, message: error.message };
+    }
+});
+
 // ========== UNIFIED STATE HANDLERS ==========
 // Get entire app state (for new windows)
 ipcMain.handle('get-app-state', async () => {
@@ -362,6 +502,34 @@ ipcMain.handle('set-theme', async (event, theme) => {
 ipcMain.handle('set-language', async (event, language) => {
     broadcastStateChange('language', language);
     return { success: true };
+});
+
+// Switch protocol (auto-disconnects if connected)
+ipcMain.handle('set-protocol', async (event, protocol) => {
+    if (protocol !== 'tcp' && protocol !== 'udp') {
+        return { success: false, message: 'Invalid protocol. Must be "tcp" or "udp"' };
+    }
+
+    // Auto-disconnect if connected
+    if (appState.connection.connected) {
+        if (appState.protocol === 'tcp' && tcpClient) {
+            tcpClient.removeAllListeners();
+            tcpClient.destroy();
+            tcpClient = null;
+        } else if (appState.protocol === 'udp' && udpSocket) {
+            udpSocket.removeAllListeners();
+            udpSocket.close();
+            udpSocket = null;
+        }
+
+        // Update connection state
+        broadcastStateChange('connection', { connected: false, error: null });
+    }
+
+    // Update protocol
+    broadcastStateChange('protocol', protocol);
+
+    return { success: true, message: `Protocol switched to ${protocol.toUpperCase()}` };
 });
 
 // Open settings window handler

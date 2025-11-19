@@ -2,10 +2,18 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // TCP connection methods
-    connect: (host, port, clientPort) => ipcRenderer.invoke('tcp-connect', host, port, clientPort),
-    disconnect: () => ipcRenderer.invoke('tcp-disconnect'),
-    send: (integers) => ipcRenderer.invoke('tcp-send', integers),
-    sendCommand: (commandId) => ipcRenderer.invoke('tcp-send-command', commandId),
+    tcpConnect: (host, port, clientPort) => ipcRenderer.invoke('tcp-connect', host, port, clientPort),
+    tcpDisconnect: () => ipcRenderer.invoke('tcp-disconnect'),
+    tcpSend: (integers) => ipcRenderer.invoke('tcp-send', integers),
+    tcpSendCommand: (commandId) => ipcRenderer.invoke('tcp-send-command', commandId),
+
+    // UDP connection methods
+    udpConnect: (listeningPort, targetHost, targetPort) => ipcRenderer.invoke('udp-connect', listeningPort, targetHost, targetPort),
+    udpDisconnect: () => ipcRenderer.invoke('udp-disconnect'),
+    udpSend: (integers, targetHost, targetPort) => ipcRenderer.invoke('udp-send', integers, targetHost, targetPort),
+
+    // Protocol management
+    setProtocol: (protocol) => ipcRenderer.invoke('set-protocol', protocol),
 
     // Window management
     openSettings: () => ipcRenderer.invoke('open-settings'),
@@ -28,6 +36,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     // Backward compatibility - these will be deprecated
     // Keep for now to avoid breaking existing code
+    connect: (host, port, clientPort) => ipcRenderer.invoke('tcp-connect', host, port, clientPort),
+    disconnect: () => ipcRenderer.invoke('tcp-disconnect'),
+    send: (integers) => ipcRenderer.invoke('tcp-send', integers),
+    sendCommand: (commandId) => ipcRenderer.invoke('tcp-send-command', commandId),
     getConnectionStatus: () => ipcRenderer.invoke('get-app-state').then(state => state.connection),
     getTheme: () => ipcRenderer.invoke('get-app-state').then(state => state.theme),
     getLanguage: () => ipcRenderer.invoke('get-app-state').then(state => state.language),

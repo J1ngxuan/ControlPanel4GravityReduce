@@ -1,7 +1,20 @@
-// DOM Elements
-const hostInput = document.getElementById('host');
-const portInput = document.getElementById('port');
-const clientPortInput = document.getElementById('client-port');
+// DOM Elements - Protocol Selection
+const protocolTcpRadio = document.getElementById('protocol-tcp');
+const protocolUdpRadio = document.getElementById('protocol-udp');
+const tcpSettingsSection = document.getElementById('tcp-settings');
+const udpSettingsSection = document.getElementById('udp-settings');
+
+// DOM Elements - TCP Settings
+const tcpHostInput = document.getElementById('tcp-host');
+const tcpPortInput = document.getElementById('tcp-port');
+const tcpClientPortInput = document.getElementById('tcp-client-port');
+
+// DOM Elements - UDP Settings
+const udpListeningPortInput = document.getElementById('udp-listening-port');
+const udpTargetHostInput = document.getElementById('udp-target-host');
+const udpTargetPortInput = document.getElementById('udp-target-port');
+
+// DOM Elements - Common Controls
 const connectBtn = document.getElementById('connect-btn');
 const disconnectBtn = document.getElementById('disconnect-btn');
 const sendBtn = document.getElementById('send-btn');
@@ -16,7 +29,9 @@ const debugRxValue = document.getElementById('debug-rx-value');
 const debugTxValue = document.getElementById('debug-tx-value');
 const sendLatencyInput = document.getElementById('send-latency');
 
+// State
 let isConnected = false;
+let currentProtocol = 'tcp'; // 'tcp' or 'udp'
 let autoSendInterval = null;
 let sendLatencyMs = 20; // Default 20ms interval, can be manually changed by user
 let currentCommand = 0; // Track current command value for int-9
@@ -40,20 +55,50 @@ let joystickPosition = { x: 0, y: 0 }; // Normalized: -1 to 1
 
 // Load settings from localStorage
 function loadSettings() {
-    // Load connection settings
-    if (hostInput) {
+    // Load protocol
+    const savedProtocol = localStorage.getItem('protocol');
+    if (savedProtocol === 'tcp' || savedProtocol === 'udp') {
+        currentProtocol = savedProtocol;
+        if (protocolTcpRadio && protocolUdpRadio) {
+            if (savedProtocol === 'tcp') {
+                protocolTcpRadio.checked = true;
+            } else {
+                protocolUdpRadio.checked = true;
+            }
+            updateProtocolUI();
+        }
+    }
+
+    // Load TCP settings
+    if (tcpHostInput) {
         const savedHost = localStorage.getItem('tcp-host');
-        if (savedHost) hostInput.value = savedHost;
+        if (savedHost) tcpHostInput.value = savedHost;
     }
 
-    if (portInput) {
+    if (tcpPortInput) {
         const savedPort = localStorage.getItem('tcp-port');
-        if (savedPort) portInput.value = savedPort;
+        if (savedPort) tcpPortInput.value = savedPort;
     }
 
-    if (clientPortInput) {
+    if (tcpClientPortInput) {
         const savedClientPort = localStorage.getItem('tcp-client-port');
-        if (savedClientPort) clientPortInput.value = savedClientPort;
+        if (savedClientPort) tcpClientPortInput.value = savedClientPort;
+    }
+
+    // Load UDP settings
+    if (udpListeningPortInput) {
+        const savedListeningPort = localStorage.getItem('udp-listening-port');
+        if (savedListeningPort) udpListeningPortInput.value = savedListeningPort;
+    }
+
+    if (udpTargetHostInput) {
+        const savedTargetHost = localStorage.getItem('udp-target-host');
+        if (savedTargetHost) udpTargetHostInput.value = savedTargetHost;
+    }
+
+    if (udpTargetPortInput) {
+        const savedTargetPort = localStorage.getItem('udp-target-port');
+        if (savedTargetPort) udpTargetPortInput.value = savedTargetPort;
     }
 
     // Load integer parameters (int-0 through int-15)
@@ -96,17 +141,33 @@ function loadSettings() {
 
 // Save settings to localStorage
 function saveSettings() {
-    // Save connection settings
-    if (hostInput) {
-        localStorage.setItem('tcp-host', hostInput.value);
+    // Save protocol
+    localStorage.setItem('protocol', currentProtocol);
+
+    // Save TCP settings
+    if (tcpHostInput) {
+        localStorage.setItem('tcp-host', tcpHostInput.value);
     }
 
-    if (portInput) {
-        localStorage.setItem('tcp-port', portInput.value);
+    if (tcpPortInput) {
+        localStorage.setItem('tcp-port', tcpPortInput.value);
     }
 
-    if (clientPortInput) {
-        localStorage.setItem('tcp-client-port', clientPortInput.value);
+    if (tcpClientPortInput) {
+        localStorage.setItem('tcp-client-port', tcpClientPortInput.value);
+    }
+
+    // Save UDP settings
+    if (udpListeningPortInput) {
+        localStorage.setItem('udp-listening-port', udpListeningPortInput.value);
+    }
+
+    if (udpTargetHostInput) {
+        localStorage.setItem('udp-target-host', udpTargetHostInput.value);
+    }
+
+    if (udpTargetPortInput) {
+        localStorage.setItem('udp-target-port', udpTargetPortInput.value);
     }
 
     // Save integer parameters (int-0 through int-15)
@@ -130,6 +191,44 @@ function saveSettings() {
     // Save send latency setting
     if (sendLatencyInput) {
         localStorage.setItem('send-latency-ms', sendLatencyInput.value);
+    }
+}
+
+// Update protocol UI (show/hide TCP or UDP settings)
+function updateProtocolUI() {
+    if (!tcpSettingsSection || !udpSettingsSection) {
+        return;
+    }
+
+    if (currentProtocol === 'tcp') {
+        tcpSettingsSection.style.display = 'block';
+        udpSettingsSection.style.display = 'none';
+    } else {
+        tcpSettingsSection.style.display = 'none';
+        udpSettingsSection.style.display = 'block';
+    }
+}
+
+// Handle protocol switch
+async function handleProtocolSwitch(newProtocol) {
+    if (newProtocol === currentProtocol) {
+        return;
+    }
+
+    currentProtocol = newProtocol;
+    saveSettings();
+
+    // Notify main process to switch protocol (auto-disconnects if connected)
+    try {
+        const result = await window.electronAPI.setProtocol(newProtocol);
+        if (result.success) {
+            addLog(`Switched to ${newProtocol.toUpperCase()} protocol`, 'success');
+            updateProtocolUI();
+        } else {
+            addLog(`Failed to switch protocol: ${result.message}`, 'error');
+        }
+    } catch (error) {
+        addLog(`Error switching protocol: ${error.message}`, 'error');
     }
 }
 
@@ -285,27 +384,57 @@ function updateConnectionStatus(connected) {
     }
 }
 
-// Connect to TCP server
+// Connect to server (TCP or UDP based on protocol)
 if (connectBtn) {
     connectBtn.addEventListener('click', async () => {
-        const host = hostInput.value.trim();
-        const port = parseInt(portInput.value);
-        const clientPort = clientPortInput ? parseInt(clientPortInput.value) || 0 : 0;
-
-        if (!host || !port) {
-            addLog('Please enter valid host and port', 'error');
-            return;
-        }
-
-        const clientPortMsg = clientPort > 0 ? ` (client port: ${clientPort})` : '';
-        addLog(`Connecting to ${host}:${port}${clientPortMsg}...`, 'info');
         connectBtn.disabled = true;
 
         // Save connection settings
         saveSettings();
 
         try {
-            const result = await window.electronAPI.connect(host, port, clientPort);
+            let result;
+
+            if (currentProtocol === 'tcp') {
+                // TCP connection
+                const host = tcpHostInput ? tcpHostInput.value.trim() : 'localhost';
+                const port = tcpPortInput ? parseInt(tcpPortInput.value) : 8080;
+                const clientPort = tcpClientPortInput ? parseInt(tcpClientPortInput.value) || 0 : 0;
+
+                if (!host || !port) {
+                    addLog('Please enter valid TCP host and port', 'error');
+                    connectBtn.disabled = false;
+                    return;
+                }
+
+                const clientPortMsg = clientPort > 0 ? ` (client port: ${clientPort})` : '';
+                addLog(`Connecting to TCP ${host}:${port}${clientPortMsg}...`, 'info');
+
+                result = await window.electronAPI.tcpConnect(host, port, clientPort);
+            } else {
+                // UDP connection
+                // Read from input if it exists (settings window), otherwise from localStorage (main window)
+                const listeningPort = udpListeningPortInput
+                    ? parseInt(udpListeningPortInput.value)
+                    : (parseInt(localStorage.getItem('udp-listening-port')) || 8081);
+                const targetHost = udpTargetHostInput
+                    ? udpTargetHostInput.value.trim()
+                    : (localStorage.getItem('udp-target-host') || 'localhost');
+                const targetPort = udpTargetPortInput
+                    ? parseInt(udpTargetPortInput.value)
+                    : (parseInt(localStorage.getItem('udp-target-port')) || 8080);
+
+                if (!listeningPort || !targetHost || !targetPort) {
+                    addLog('Please enter valid UDP settings', 'error');
+                    connectBtn.disabled = false;
+                    return;
+                }
+
+                addLog(`Starting UDP: Listen on port ${listeningPort}, Target ${targetHost}:${targetPort}...`, 'info');
+
+                result = await window.electronAPI.udpConnect(listeningPort, targetHost, targetPort);
+            }
+
             if (result.success) {
                 updateConnectionStatus(true);
             } else {
@@ -349,11 +478,15 @@ function stopAutoSend() {
     addLog('Auto-send stopped', 'info');
 }
 
-// Disconnect from TCP server
+// Disconnect from server (TCP or UDP)
 if (disconnectBtn) {
     disconnectBtn.addEventListener('click', async () => {
         try {
-            await window.electronAPI.disconnect();
+            if (currentProtocol === 'tcp') {
+                await window.electronAPI.tcpDisconnect();
+            } else {
+                await window.electronAPI.udpDisconnect();
+            }
             updateConnectionStatus(false);
         } catch (error) {
             addLog(`Disconnect error: ${error.message}`, 'error');
@@ -486,7 +619,24 @@ async function sendIntegerData() {
     }
 
     try {
-        const result = await window.electronAPI.send(integers);
+        let result;
+
+        if (currentProtocol === 'tcp') {
+            // Send via TCP
+            result = await window.electronAPI.tcpSend(integers);
+        } else {
+            // Send via UDP
+            // Read from input if it exists (settings window), otherwise from localStorage (main window)
+            const targetHost = udpTargetHostInput
+                ? udpTargetHostInput.value.trim()
+                : (localStorage.getItem('udp-target-host') || 'localhost');
+            const targetPort = udpTargetPortInput
+                ? parseInt(udpTargetPortInput.value)
+                : (parseInt(localStorage.getItem('udp-target-port')) || 8080);
+
+            result = await window.electronAPI.udpSend(integers, targetHost, targetPort);
+        }
+
         if (!result.success && !autoSendInterval) {
             addLog(`Send failed: ${result.message}`, 'error');
         }
@@ -957,12 +1107,26 @@ function initializeWindowControls() {
 
 // Setup input change listeners for auto-save
 function setupInputListeners() {
-    // Listen to host/port changes
-    if (hostInput) {
-        hostInput.addEventListener('change', saveSettings);
+    // Listen to TCP settings changes
+    if (tcpHostInput) {
+        tcpHostInput.addEventListener('change', saveSettings);
     }
-    if (portInput) {
-        portInput.addEventListener('change', saveSettings);
+    if (tcpPortInput) {
+        tcpPortInput.addEventListener('change', saveSettings);
+    }
+    if (tcpClientPortInput) {
+        tcpClientPortInput.addEventListener('change', saveSettings);
+    }
+
+    // Listen to UDP settings changes
+    if (udpListeningPortInput) {
+        udpListeningPortInput.addEventListener('change', saveSettings);
+    }
+    if (udpTargetHostInput) {
+        udpTargetHostInput.addEventListener('change', saveSettings);
+    }
+    if (udpTargetPortInput) {
+        udpTargetPortInput.addEventListener('change', saveSettings);
     }
 
     // Listen to integer input changes (int-0 through int-15)
@@ -1395,6 +1559,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const appState = await window.electronAPI.getAppState();
 
+        // Apply protocol state
+        if (appState.protocol) {
+            currentProtocol = appState.protocol;
+            if (protocolTcpRadio && protocolUdpRadio) {
+                if (appState.protocol === 'tcp') {
+                    protocolTcpRadio.checked = true;
+                } else {
+                    protocolUdpRadio.checked = true;
+                }
+            }
+            updateProtocolUI();
+        }
+
         // Apply connection state
         if (appState.connection) {
             updateConnectionStatus(appState.connection.connected);
@@ -1412,6 +1589,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (connectBtn || disconnectBtn) {
             updateConnectionStatus(false);
         }
+    }
+
+    // Protocol radio button event listeners
+    if (protocolTcpRadio) {
+        protocolTcpRadio.addEventListener('change', () => {
+            if (protocolTcpRadio.checked) {
+                handleProtocolSwitch('tcp');
+            }
+        });
+    }
+
+    if (protocolUdpRadio) {
+        protocolUdpRadio.addEventListener('change', () => {
+            if (protocolUdpRadio.checked) {
+                handleProtocolSwitch('udp');
+            }
+        });
     }
 
     // Only log if log container exists
@@ -1440,4 +1634,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Reinitialize displays with new language
         initializeDisplays();
     });
+
+    // Listen for protocol changes from other windows (via unified state)
+    if (window.electronAPI && window.electronAPI.onStateChanged) {
+        window.electronAPI.onStateChanged((key, value) => {
+            if (key === 'protocol' && value !== currentProtocol) {
+                currentProtocol = value;
+                if (protocolTcpRadio && protocolUdpRadio) {
+                    if (value === 'tcp') {
+                        protocolTcpRadio.checked = true;
+                    } else {
+                        protocolUdpRadio.checked = true;
+                    }
+                }
+                updateProtocolUI();
+                if (logContainer) {
+                    addLog(`Protocol changed to ${value.toUpperCase()} by another window`, 'info');
+                }
+            }
+        });
+    }
 });
