@@ -8,6 +8,7 @@ let settingsWindow = null;
 let tcpClient = null;
 let isConnected = false;
 let currentTheme = 'dark'; // Store current theme globally
+let currentLanguage = 'en'; // Store current language globally
 
 // Int2Byte conversion function
 function Int2Byte(i) {
@@ -70,7 +71,7 @@ function createSettingsWindow() {
 app.whenReady().then(() => {
     createWindow();
 
-    // Load saved theme from localStorage after window is created
+    // Load saved theme and language from localStorage after window is created
     mainWindow.webContents.once('did-finish-load', () => {
         mainWindow.webContents.executeJavaScript('localStorage.getItem("theme")')
             .then(savedTheme => {
@@ -79,6 +80,14 @@ app.whenReady().then(() => {
                 }
             })
             .catch(err => console.error('Failed to load theme:', err));
+
+        mainWindow.webContents.executeJavaScript('localStorage.getItem("language")')
+            .then(savedLanguage => {
+                if (savedLanguage) {
+                    currentLanguage = savedLanguage;
+                }
+            })
+            .catch(err => console.error('Failed to load language:', err));
     });
 
     app.on('activate', function () {
@@ -274,4 +283,21 @@ ipcMain.handle('set-theme', async (event, theme) => {
 
 ipcMain.handle('get-theme', async () => {
     return currentTheme;
+});
+
+// Language Management Handlers
+ipcMain.handle('set-language', async (event, language) => {
+    currentLanguage = language;
+    // Broadcast language change to all windows EXCEPT the sender
+    const senderWebContents = event.sender;
+    BrowserWindow.getAllWindows().forEach(win => {
+        if (win.webContents !== senderWebContents) {
+            win.webContents.send('language-changed', language);
+        }
+    });
+    return { success: true };
+});
+
+ipcMain.handle('get-language', async () => {
+    return currentLanguage;
 });

@@ -9,7 +9,11 @@
 <body>
     <div class="container settings-container">
         <div class="header-container">
-            <h1>Configuration Settings</h1>
+            <h1 data-i18n="configurationSettings">Configuration Settings</h1>
+            <button class="btn-settings" id="language-toggle-btn" title="Toggle Language">
+                <span id="language-text">EN</span>
+                <span data-i18n="language">Language</span>
+            </button>
             <button class="btn-settings" id="theme-toggle-btn" title="Toggle Theme">
                 <svg width="16" height="16" viewBox="0 0 16 16" id="theme-icon">
                     <!-- Moon icon (for dark mode) -->
@@ -27,29 +31,29 @@
                         <line x1="4.5" y1="11.5" x2="3" y2="13" stroke="currentColor" stroke-width="1.5"/>
                     </g>
                 </svg>
-                <span>Theme</span>
+                <span data-i18n="theme">Theme</span>
             </button>
         </div>
 
         <!-- Connection Section -->
         <div class="section connection-section">
-            <h2>Connection Settings</h2>
+            <h2 data-i18n="connectionSettings">Connection Settings</h2>
             <div class="connection-controls">
                 <div class="input-group">
-                    <label for="host">Host:</label>
+                    <label for="host" data-i18n="host">Host:</label>
                     <input type="text" id="host" value="localhost" placeholder="localhost">
                 </div>
                 <div class="input-group">
-                    <label for="port">Port:</label>
+                    <label for="port" data-i18n="port">Port:</label>
                     <input type="number" id="port" value="8080" placeholder="8080">
                 </div>
-                <button id="connect-btn" class="btn btn-primary">Connect</button>
-                <button id="disconnect-btn" class="btn btn-secondary" disabled>Disconnect</button>
-                <span id="status-indicator" class="status-disconnected">Disconnected</span>
+                <button id="connect-btn" class="btn btn-primary" data-i18n="connect">Connect</button>
+                <button id="disconnect-btn" class="btn btn-secondary" data-i18n="disconnect" disabled>Disconnect</button>
+                <span id="status-indicator" class="status-disconnected" data-i18n="disconnected">Disconnected</span>
                 <div class="input-group auto-send-group">
                     <label>
                         <input type="checkbox" id="auto-send-toggle">
-                        <strong>Auto-Send (50Hz)</strong>
+                        <strong data-i18n="autoSend50Hz">Auto-Send (50Hz)</strong>
                     </label>
                     <span class="auto-send-indicator" id="auto-send-indicator">OFF</span>
                 </div>
@@ -58,18 +62,18 @@
 
         <!-- Control Parameters Section -->
         <div class="section send-section">
-            <h2>Control Parameters</h2>
+            <h2 data-i18n="controlParameters">Control Parameters</h2>
             <div class="control-layout">
                 <!-- Speed Control -->
                 <div class="control-group">
-                    <h3>Speed Control</h3>
+                    <h3 data-i18n="speedControl">Speed Control</h3>
                     <div class="integer-input">
-                        <label for="int-0">Speed Mode:</label>
+                        <label for="int-0" data-i18n="speedMode">Speed Mode:</label>
                         <input type="number" id="int-0" value="0" min="0" max="4" title="0:Low 1:Med 2:High 3:CustomXY 4:CustomForce">
                         <span class="unit-hint">0-4</span>
                     </div>
                     <div class="integer-input">
-                        <label for="int-1">Target Speed:</label>
+                        <label for="int-1" data-i18n="targetSpeed">Target Speed:</label>
                         <input type="number" id="int-1" value="15" min="0" max="65535">
                         <span class="unit-hint">mm/s</span>
                     </div>
@@ -77,19 +81,19 @@
 
                 <!-- Position Control -->
                 <div class="control-group">
-                    <h3>Position Control</h3>
+                    <h3 data-i18n="positionControl">Position Control</h3>
                     <div class="integer-input">
-                        <label for="int-2">Target X:</label>
+                        <label for="int-2" data-i18n="targetX">Target X:</label>
                         <input type="number" id="int-2" value="0" min="0" max="65535">
                         <span class="unit-hint">mm</span>
                     </div>
                     <div class="integer-input">
-                        <label for="int-3">Target Y:</label>
+                        <label for="int-3" data-i18n="targetY">Target Y:</label>
                         <input type="number" id="int-3" value="0" min="0" max="65535">
                         <span class="unit-hint">mm</span>
                     </div>
                     <div class="integer-input">
-                        <label for="int-4">Target Z:</label>
+                        <label for="int-4" data-i18n="targetZ">Target Z:</label>
                         <input type="number" id="int-4" value="0" min="0" max="65535">
                         <span class="unit-hint">mm</span>
                     </div>
@@ -97,11 +101,11 @@
 
                 <!-- Operation Mode -->
                 <div class="control-group">
-                    <h3>Operation Settings</h3>
+                    <h3 data-i18n="operationSettings">Operation Settings</h3>
                     <div class="integer-input">
-                        <label for="int-5">Operation Mode:</label>
+                        <label for="int-5" data-i18n="operationMode">Operation Mode:</label>
                         <input type="number" id="int-5" value="0" min="0" max="65535">
-                        <span class="unit-hint">PID Set</span>
+                        <span class="unit-hint" data-i18n="pidParameter">PID Set</span>
                     </div>
                     <div class="integer-input">
                         <label for="int-6">Reserved 6:</label>
@@ -156,6 +160,8 @@
         </div>
     </div>
 
+    <script src="locales.js"></script>
+    <script src="language-manager.js"></script>
     <script src="theme-manager.js"></script>
     <script src="renderer.js"></script>
 </body>

@@ -17,6 +17,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
     getTheme: () => ipcRenderer.invoke('get-theme'),
 
+    // Language management
+    setLanguage: (language) => ipcRenderer.invoke('set-language', language),
+    getLanguage: () => ipcRenderer.invoke('get-language'),
+
     // Event listeners
     onConnectionStatus: (callback) => {
         ipcRenderer.on('connection-status', (event, data) => callback(data));
@@ -26,5 +30,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
     onThemeChanged: (callback) => {
         ipcRenderer.on('theme-changed', (event, theme) => callback(theme));
+    },
+    onLanguageChanged: (callback) => {
+        ipcRenderer.on('language-changed', (event, language) => callback(language));
     }
 });

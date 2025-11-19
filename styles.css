@@ -193,6 +193,11 @@ body {
     pointer-events: none;
 }
 
+.titlebar-button span {
+    font-size: 12px;
+    font-weight: 600;
+}
+
 .container {
     max-width: 100%;
     height: calc(100vh - 30px);
@@ -249,6 +254,7 @@ body {
     justify-content: center;
     position: relative;
     margin-bottom: 20px;
+    gap: 10px;
 }
 
 h1 {

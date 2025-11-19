@@ -93,20 +93,12 @@ function initializeDisplays() {
         return;
     }
 
-    // Boolean status labels (40 status indicators)
-    const boolLabels = [
-        'X Pos Complete', 'Y Pos Complete', 'Z Pos Complete',  // 0-2
-        'X Calibrated', 'Y Calibrated', 'Z Status',  // 3-5
-        'X Servo Active', 'Y Servo Active', 'Z Servo Active',  // 6-8
-        'X+ Hard Limit', 'X- Hard Limit', 'Y+ Hard Limit', 'Y- Hard Limit',  // 9-12
-        'X+ Soft Limit', 'X- Soft Limit', 'Y Soft Status', 'Z Soft Status',  // 13-16
-        'Force Exp Active', 'Precision Align', 'Abs Pos Move', 'Emergency Stop',  // 17-20
-        'Status 21', 'Status 22', 'Status 23', 'Status 24',  // 21-24
-        'Status 25', 'Status 26', 'Status 27', 'Status 28',  // 25-28
-        'Status 29', 'Status 30', 'Status 31', 'Status 32',  // 29-32
-        'Status 33', 'Status 34', 'Status 35', 'Status 36',  // 33-36
-        'Status 37', 'Status 38', 'Status 39', 'Status 40'   // 37-39
-    ];
+    // Get current language labels or use English as fallback
+    const currentLang = window.getCurrentLanguage ? window.getCurrentLanguage() : 'en';
+    const locales = window.LOCALES || {};
+    const labels = locales[currentLang] || locales['en'] || {};
+    const boolLabels = labels.boolLabels || [];
+    const intLabels = labels.intLabels || [];
 
     // Create 40 boolean display items
     boolDisplay.innerHTML = '';
@@ -115,18 +107,11 @@ function initializeDisplays() {
         boolItem.className = 'bool-item bool-false';
         boolItem.id = `bool-${i}`;
         boolItem.innerHTML = `
-            <div class="bool-label">${boolLabels[i]}</div>
+            <div class="bool-label">${boolLabels[i] || `Status ${i+1}`}</div>
             <div class="bool-value">FALSE</div>
         `;
         boolDisplay.appendChild(boolItem);
     }
-
-    // Integer status labels (10 status values)
-    const intLabels = [
-        'Current X Pos', 'Current Y Pos', 'Current Z Pos',  // 0-2
-        'Current Speed', 'Force Value', 'Tension Value',    // 3-5
-        'Status Int 6', 'Status Int 7', 'Status Int 8', 'Status Int 9'  // 6-9
-    ];
 
     // Create 10 integer display items
     intDisplay.innerHTML = '';
@@ -135,7 +120,7 @@ function initializeDisplays() {
         intItem.className = 'int-item';
         intItem.id = `int-display-${i}`;
         intItem.innerHTML = `
-            <div class="int-item-label">${intLabels[i]}</div>
+            <div class="int-item-label">${intLabels[i] || `Int ${i}`}</div>
             <div class="int-item-value">0</div>
         `;
         intDisplay.appendChild(intItem);
@@ -1313,4 +1298,12 @@ document.addEventListener('DOMContentLoaded', () => {
             drawJoystick();
         }
     });
+
+    // Listen for language changes from other windows
+    if (window.electronAPI && window.electronAPI.onLanguageChanged) {
+        window.electronAPI.onLanguageChanged(() => {
+            // Reinitialize displays with new language
+            initializeDisplays();
+        });
+    }
 });

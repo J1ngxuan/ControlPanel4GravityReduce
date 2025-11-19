@@ -13,6 +13,9 @@
             <div class="titlebar-title">Equipment Control Panel</div>
         </div>
         <div class="titlebar-controls">
+            <button class="titlebar-button" id="language-toggle-btn" title="Toggle Language">
+                <span id="language-text">EN</span>
+            </button>
             <button class="titlebar-button" id="theme-toggle-btn" title="Toggle Theme">
                 <svg width="16" height="16" viewBox="0 0 16 16" id="theme-icon">
                     <!-- Moon icon (for dark mode) -->
@@ -53,12 +56,12 @@
     <div class="container">
         <!-- Connection Status Bar -->
         <div class="status-bar">
-            <span class="status-label">Connection:</span>
-            <span id="status-indicator" class="status-disconnected">Disconnected</span>
+            <span class="status-label" data-i18n="connection">Connection:</span>
+            <span id="status-indicator" class="status-disconnected" data-i18n="disconnected">Disconnected</span>
             <div class="auto-send-controls">
                 <label>
                     <input type="checkbox" id="auto-send-toggle">
-                    <span class="status-label">Auto-Send (50Hz)</span>
+                    <span class="status-label" data-i18n="autoSend50Hz">Auto-Send (50Hz)</span>
                 </label>
                 <span id="auto-send-indicator" class="auto-send-indicator">OFF</span>
             </div>
@@ -66,9 +69,9 @@
 
         <!-- Tab Navigation -->
         <div class="tab-navigation">
-            <button class="tab-button active" data-tab="commands">Control Commands</button>
-            <button class="tab-button" data-tab="monitor">Monitor</button>
-            <button id="settings-btn" class="btn-settings" title="Settings">⚙️ Settings</button>
+            <button class="tab-button active" data-tab="commands" data-i18n="tabCommands">Control Commands</button>
+            <button class="tab-button" data-tab="monitor" data-i18n="tabMonitor">Monitor</button>
+            <button id="settings-btn" class="btn-settings" title="Settings"><span data-i18n="settingsBtn">⚙️ Settings</span></button>
         </div>
 
         <!-- Tab Content -->
@@ -76,8 +79,8 @@
         <!-- Tab 1: Control Commands -->
         <div class="tab-content active" id="tab-commands">
         <div class="section commands-section">
-            <h2>Control Commands</h2>
-            <p class="current-command-display">Current Command: <span id="current-cmd-display">0 - None</span><span id="cmd-loading-icon" class="cmd-loading-icon" style="display: none;">⏳</span></p>
+            <h2 data-i18n="tabCommands">Control Commands</h2>
+            <p class="current-command-display"><span data-i18n="currentCommand">Current Command:</span> <span id="current-cmd-display">0 - <span data-i18n="cmdNone">None</span></span><span id="cmd-loading-icon" class="cmd-loading-icon" style="display: none;">⏳</span></p>
 
             <!-- Two Column Layout -->
             <div class="commands-two-column">
@@ -85,31 +88,31 @@
                 <div class="commands-column">
                     <!-- System Control -->
                     <div class="command-group">
-                        <h3>System Control</h3>
+                        <h3 data-i18n="systemControl">System Control</h3>
                         <div class="commands-grid-group">
-                            <button class="btn btn-command btn-start" data-cmd="1" data-name="Start Experiment" disabled>Start Experiment</button>
-                            <button class="btn btn-command btn-stop" data-cmd="2" data-name="Stop Experiment" disabled>Stop Experiment</button>
-                            <button class="btn btn-command" data-cmd="30" data-name="Clear Faults" disabled>Clear Faults</button>
+                            <button class="btn btn-command btn-start" data-cmd="1" data-name="Start Experiment" data-i18n="startExperiment" disabled>Start Experiment</button>
+                            <button class="btn btn-command btn-stop" data-cmd="2" data-name="Stop Experiment" data-i18n="stopExperiment" disabled>Stop Experiment</button>
+                            <button class="btn btn-command" data-cmd="30" data-name="Clear Faults" data-i18n="clearFaults" disabled>Clear Faults</button>
                         </div>
                     </div>
 
                     <!-- Position & Special Functions -->
                     <div class="command-group">
-                        <h3>Position & Special Functions</h3>
+                        <h3 data-i18n="positionSpecialFunctions">Position & Special Functions</h3>
                         <div class="commands-grid-group">
-                            <button class="btn btn-command" data-cmd="20" data-name="XY Position Move" disabled>XY Position Move</button>
-                            <button class="btn btn-command" data-cmd="21" data-name="Precision Align" disabled>Precision Align</button>
-                            <button class="btn btn-command" data-cmd="22" data-name="Tension Setting" disabled>Tension Setting</button>
+                            <button class="btn btn-command" data-cmd="20" data-name="XY Position Move" data-i18n="xyPositionMove" disabled>XY Position Move</button>
+                            <button class="btn btn-command" data-cmd="21" data-name="Precision Align" data-i18n="precisionAlign" disabled>Precision Align</button>
+                            <button class="btn btn-command" data-cmd="22" data-name="Tension Setting" data-i18n="tensionSetting" disabled>Tension Setting</button>
                         </div>
                     </div>
 
                     <!-- Emergency Stops -->
                     <div class="command-group">
-                        <h3>Emergency Stops</h3>
+                        <h3 data-i18n="emergencyStops">Emergency Stops</h3>
                         <div class="commands-grid-group">
-                            <button class="btn btn-command" data-cmd="18" data-name="Stop Z-axis" disabled>Stop Z-axis</button>
-                            <button class="btn btn-command btn-emergency" data-cmd="19" data-name="STOP XYZ" disabled>STOP XYZ</button>
-                            <button class="btn btn-command btn-emergency" data-cmd="23" data-name="Emergency Stop" disabled>Emergency Stop + Clear Pulse</button>
+                            <button class="btn btn-command" data-cmd="18" data-name="Stop Z-axis" data-i18n="stopZAxis" disabled>Stop Z-axis</button>
+                            <button class="btn btn-command btn-emergency" data-cmd="19" data-name="STOP XYZ" data-i18n="stopXYZ" disabled>STOP XYZ</button>
+                            <button class="btn btn-command btn-emergency" data-cmd="23" data-name="Emergency Stop" data-i18n="emergencyStop" disabled>Emergency Stop + Clear Pulse</button>
                         </div>
                     </div>
                 </div>
@@ -118,28 +121,28 @@
                 <div class="commands-column">
                     <!-- Power Control -->
                     <div class="command-group">
-                        <h3>Power & Servo Control</h3>
+                        <h3 data-i18n="powerServoControl">Power & Servo Control</h3>
                         <div class="power-switches-container">
                             <div class="switch-group" id="driver-power-switch-group">
-                                <label class="switch-label">Driver Power</label>
+                                <label class="switch-label" data-i18n="driverPower">Driver Power</label>
                                 <div class="switch-wrapper">
-                                    <span class="switch-state-label">OFF</span>
+                                    <span class="switch-state-label" data-i18n="off">OFF</span>
                                     <label class="toggle-switch">
                                         <input type="checkbox" id="driver-power-switch" data-cmd-on="3" data-cmd-off="4" data-name="Driver Power" disabled>
                                         <span class="slider-switch"></span>
                                     </label>
-                                    <span class="switch-state-label">ON</span>
+                                    <span class="switch-state-label" data-i18n="on">ON</span>
                                 </div>
                             </div>
                             <div class="switch-group" id="servo-module-switch-group">
-                                <label class="switch-label">Servo Module</label>
+                                <label class="switch-label" data-i18n="servoModule">Servo Module</label>
                                 <div class="switch-wrapper">
-                                    <span class="switch-state-label">OFF</span>
+                                    <span class="switch-state-label" data-i18n="off">OFF</span>
                                     <label class="toggle-switch">
                                         <input type="checkbox" id="servo-module-switch" data-cmd-on="5" data-cmd-off="6" data-name="Servo Module" disabled>
                                         <span class="slider-switch"></span>
                                     </label>
-                                    <span class="switch-state-label">ON</span>
+                                    <span class="switch-state-label" data-i18n="on">ON</span>
                                 </div>
                             </div>
                         </div>
@@ -147,11 +150,11 @@
 
                     <!-- Axis Movement -->
                     <div class="command-group">
-                        <h3>Axis Movement</h3>
+                        <h3 data-i18n="axisMovement">Axis Movement</h3>
                         <div class="axis-controls-container">
                             <!-- XY Joystick Control -->
                             <div class="joystick-container">
-                                <h4>X/Y Axis Control</h4>
+                                <h4 data-i18n="xyAxisControl">X/Y Axis Control</h4>
                                 <div class="joystick-wrapper">
                                     <canvas id="joystick-canvas" width="160" height="160"></canvas>
                                     <div class="joystick-labels">
@@ -162,20 +165,20 @@
                                     </div>
                                 </div>
                                 <div class="joystick-status">
-                                    <span id="joystick-status">Inactive</span>
+                                    <span id="joystick-status" data-i18n="inactive">Inactive</span>
                                 </div>
                             </div>
 
                             <!-- Z Axis Slider Control -->
                             <div class="slider-container">
-                                <h4>Z Axis Control</h4>
+                                <h4 data-i18n="zAxisControl">Z Axis Control</h4>
                                 <div class="slider-wrapper">
                                     <div class="slider-label-top">Z+</div>
                                     <input type="range" id="z-slider" class="z-slider" min="-1" max="1" value="0" step="1" orient="vertical" disabled>
                                     <div class="slider-label-bottom">Z-</div>
                                 </div>
                                 <div class="slider-status">
-                                    <span id="slider-status">Inactive</span>
+                                    <span id="slider-status" data-i18n="inactive">Inactive</span>
                                 </div>
                             </div>
                         </div>
@@ -189,11 +192,11 @@
         <div class="tab-content" id="tab-monitor">
         <!-- Status Monitoring Section -->
         <div class="section receive-section">
-            <h2>Status Monitoring</h2>
+            <h2 data-i18n="statusMonitoring">Status Monitoring</h2>
 
             <!-- 40 Boolean Status Indicators -->
             <div class="subsection">
-                <h3>System Status Indicators (40 Boolean Values)</h3>
+                <h3 data-i18n="systemStatusIndicators">System Status Indicators (40 Boolean Values)</h3>
                 <div id="bool-display" class="bool-grid">
                     <!-- Will be populated by JavaScript -->
                 </div>
@@ -201,7 +204,7 @@
 
             <!-- 10 Integer Status Values -->
             <div class="subsection">
-                <h3>Status Values (10 Integers)</h3>
+                <h3 data-i18n="statusValues">Status Values (10 Integers)</h3>
                 <div id="int-display" class="int-display-grid">
                     <!-- Will be populated by JavaScript -->
                 </div>
@@ -210,13 +213,15 @@
 
         <!-- Log Section -->
         <div class="section log-section">
-            <h2>Log</h2>
+            <h2 data-i18n="logTitle">Log</h2>
             <div id="log" class="log-container"></div>
         </div>
         </div>
         <!-- End of Tab 3 -->
     </div>
 
+    <script src="locales.js"></script>
+    <script src="language-manager.js"></script>
     <script src="theme-manager.js"></script>
     <script src="renderer.js"></script>
 </body>
