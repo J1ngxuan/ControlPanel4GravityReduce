@@ -8,12 +8,34 @@ An Electron-based Windows desktop application for controlling gravity reducing e
 
 ## Multi-Window Architecture
 
-**CRITICAL**: This is a multi-window Electron app. Any settings or state changes MUST synchronize across all windows via IPC:
-- Main window (index.html) - primary control interface
-- Settings window (settings.html) - configuration interface
-- Always broadcast state changes to `BrowserWindow.getAllWindows()` in main.js
-- Theme changes, connection status, and TCP data must sync to all windows
-- Check main.js:109, 124, 134, 181, 269 for examples of multi-window broadcasts
+**CRITICAL**: This is a multi-window Electron app with unified state management:
+
+### Centralized State Management
+All application state is managed centrally in main.js using a single source of truth:
+```javascript
+const appState = {
+    connection: { connected: false, error: null },
+    theme: 'dark',
+    language: 'en',
+    tcpData: { bools: [], ints: [] }
+};
+```
+
+### State Synchronization Pattern
+- **Single broadcast function**: `broadcastStateChange(key, value)` updates state and notifies all windows
+- **Single query function**: `getAppState()` returns complete state for new windows
+- **Single IPC event**: `app-state-changed` with `{ key, value }` payload
+- **No localStorage sync**: Settings persist to localStorage but sync via IPC only
+
+### Windows
+- Main window (index.html) - primary control interface with commands and controls
+- Settings window (settings.html) - configuration interface for parameters
+
+### Implementation
+- main.js: Lines 10-49 define state management (appState, broadcastStateChange, getAppState)
+- preload.js: Lines 16-53 expose unified API (getAppState, onStateChanged) + backward compatibility
+- renderer.js: Lines 1417-1439 query initial state on load
+- theme-manager.js & language-manager.js: Use backward-compatible API
 
 ## Common Commands
 
@@ -27,6 +49,21 @@ node test-server.js # Run TCP test server (simulates PLC)
 npm run build       # Build Windows installer (NSIS + portable)
 npm run build:dir   # Build unpacked for testing
 ```
+
+## TCP Connection Notes
+
+### Client Port Binding
+- **Port 0 (recommended)**: Let the OS auto-assign an available port. No reconnection delays.
+- **Specific Port**: When using a fixed client port, Windows keeps it in TIME_WAIT state for 30-120 seconds after disconnect.
+  - A 1-second delay is automatically added before reconnection attempts
+  - If reconnection fails immediately, wait 30 seconds or use port 0
+  - This is standard TCP/IP behavior and cannot be bypassed in Node.js client sockets
+
+### Connection Lifecycle
+- `connect()`: Establishes TCP connection with optional client port binding
+- `disconnect()`: Graceful shutdown using `end()` + 500ms timeout before `destroy()`
+- Socket cleanup includes `removeAllListeners()` to prevent memory leaks
+- Connection status syncs across all windows via IPC broadcasts
 
 ## TCP Protocol Details
 
@@ -134,6 +171,33 @@ Modular alternatives (not currently used):
 - validation.js, settings-manager.js, theme-manager.js - Utility modules
 
 ## Important Patterns
+
+### Adding New State Properties
+To add a new state property that syncs across windows:
+1. Add to `appState` object in main.js (line 12-23)
+2. Update state: Call `broadcastStateChange('propertyName', value)` anywhere in main.js
+3. Listen in renderer: Use `window.electronAPI.onStateChanged((key, value) => {...})`
+4. Optional: Add specific setter in main.js IPC handlers
+5. Optional: Add backward-compatible accessor in preload.js
+
+Example:
+```javascript
+// main.js: Add to appState
+const appState = {
+    // ... existing state
+    myNewProperty: 'default value'
+};
+
+// main.js: Update when needed
+broadcastStateChange('myNewProperty', newValue);
+
+// renderer.js: Listen for changes
+window.electronAPI.onStateChanged((key, value) => {
+    if (key === 'myNewProperty') {
+        console.log('New value:', value);
+    }
+});
+```
 
 ### Adding New Commands
 1. Add button to index.html with data-cmd attribute

@@ -13,25 +13,42 @@ contextBridge.exposeInMainWorld('electronAPI', {
     windowMaximize: () => ipcRenderer.invoke('window-maximize'),
     windowClose: () => ipcRenderer.invoke('window-close'),
 
-    // Theme management
+    // ========== UNIFIED STATE MANAGEMENT ==========
+    // Get entire app state (for initialization)
+    getAppState: () => ipcRenderer.invoke('get-app-state'),
+
+    // Update specific state values
     setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
-    getTheme: () => ipcRenderer.invoke('get-theme'),
-
-    // Language management
     setLanguage: (language) => ipcRenderer.invoke('set-language', language),
-    getLanguage: () => ipcRenderer.invoke('get-language'),
 
-    // Event listeners
+    // Single unified state change listener
+    onStateChanged: (callback) => {
+        ipcRenderer.on('app-state-changed', (event, { key, value }) => callback(key, value));
+    },
+
+    // Backward compatibility - these will be deprecated
+    // Keep for now to avoid breaking existing code
+    getConnectionStatus: () => ipcRenderer.invoke('get-app-state').then(state => state.connection),
+    getTheme: () => ipcRenderer.invoke('get-app-state').then(state => state.theme),
+    getLanguage: () => ipcRenderer.invoke('get-app-state').then(state => state.language),
     onConnectionStatus: (callback) => {
-        ipcRenderer.on('connection-status', (event, data) => callback(data));
+        ipcRenderer.on('app-state-changed', (event, { key, value }) => {
+            if (key === 'connection') callback(value);
+        });
     },
     onDataReceived: (callback) => {
-        ipcRenderer.on('tcp-data-received', (event, data) => callback(data));
+        ipcRenderer.on('app-state-changed', (event, { key, value }) => {
+            if (key === 'tcpData') callback(value);
+        });
     },
     onThemeChanged: (callback) => {
-        ipcRenderer.on('theme-changed', (event, theme) => callback(theme));
+        ipcRenderer.on('app-state-changed', (event, { key, value }) => {
+            if (key === 'theme') callback(value);
+        });
     },
     onLanguageChanged: (callback) => {
-        ipcRenderer.on('language-changed', (event, language) => callback(language));
+        ipcRenderer.on('app-state-changed', (event, { key, value }) => {
+            if (key === 'language') callback(value);
+        });
     }
 });

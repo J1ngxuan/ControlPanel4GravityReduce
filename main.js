@@ -6,9 +6,47 @@ const path = require('path');
 let mainWindow;
 let settingsWindow = null;
 let tcpClient = null;
-let isConnected = false;
-let currentTheme = 'dark'; // Store current theme globally
-let currentLanguage = 'en'; // Store current language globally
+
+// ========== UNIFIED STATE MANAGEMENT ==========
+// Centralized application state - single source of truth
+const appState = {
+    connection: {
+        connected: false,
+        error: null
+    },
+    theme: 'dark',
+    language: 'en',
+    tcpData: {
+        bools: [],
+        ints: []
+    }
+};
+
+// Broadcast state changes to all windows
+function broadcastStateChange(stateKey, value) {
+    // Update the central state
+    if (stateKey.includes('.')) {
+        // Handle nested keys like 'connection.connected'
+        const keys = stateKey.split('.');
+        let target = appState;
+        for (let i = 0; i < keys.length - 1; i++) {
+            target = target[keys[i]];
+        }
+        target[keys[keys.length - 1]] = value;
+    } else {
+        appState[stateKey] = value;
+    }
+
+    // Broadcast to all windows
+    BrowserWindow.getAllWindows().forEach(win => {
+        win.webContents.send('app-state-changed', { key: stateKey, value });
+    });
+}
+
+// Get current state (for new windows)
+function getAppState() {
+    return appState;
+}
 
 // Int2Byte conversion function
 function Int2Byte(i) {
@@ -76,7 +114,7 @@ app.whenReady().then(() => {
         mainWindow.webContents.executeJavaScript('localStorage.getItem("theme")')
             .then(savedTheme => {
                 if (savedTheme) {
-                    currentTheme = savedTheme;
+                    appState.theme = savedTheme;
                 }
             })
             .catch(err => console.error('Failed to load theme:', err));
@@ -84,7 +122,7 @@ app.whenReady().then(() => {
         mainWindow.webContents.executeJavaScript('localStorage.getItem("language")')
             .then(savedLanguage => {
                 if (savedLanguage) {
-                    currentLanguage = savedLanguage;
+                    appState.language = savedLanguage;
                 }
             })
             .catch(err => console.error('Failed to load language:', err));
@@ -96,8 +134,11 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', function () {
+    // Clean up TCP connection on app shutdown
     if (tcpClient) {
+        tcpClient.removeAllListeners();
         tcpClient.destroy();
+        tcpClient = null;
     }
     if (process.platform !== 'darwin') app.quit();
 });
@@ -105,66 +146,91 @@ app.on('window-all-closed', function () {
 // TCP Connection Handler
 ipcMain.handle('tcp-connect', async (event, host, port, clientPort) => {
     return new Promise((resolve, reject) => {
+        // Clean up existing connection if any
         if (tcpClient) {
+            tcpClient.removeAllListeners();
             tcpClient.destroy();
+            tcpClient = null;
         }
 
-        tcpClient = new net.Socket();
+        // Add a small delay if reconnecting to allow port to be released
+        // This helps with TIME_WAIT state when using specific client ports
+        const reconnectDelay = (clientPort && clientPort > 0) ? 1000 : 0;
 
-        // Set up connection options
-        const connectionOptions = {
-            port: port,
-            host: host
-        };
-
-        // Only set localPort if clientPort is specified (non-zero)
-        if (clientPort && clientPort > 0) {
-            connectionOptions.localPort = clientPort;
-            console.log('Binding to client port:', clientPort);
-        }
-
-        tcpClient.connect(connectionOptions, () => {
-            isConnected = true;
-            const clientPortMsg = clientPort > 0 ? ` (client port: ${clientPort})` : '';
-            console.log(`Connected to TCP server: ${host}:${port}${clientPortMsg}`);
-            // Send status to all windows
-            BrowserWindow.getAllWindows().forEach(win => {
-                win.webContents.send('connection-status', { connected: true });
-            });
-            resolve({ success: true, message: 'Connected successfully' });
-        });
-
-        tcpClient.on('data', (data) => {
-            console.log('Received data:', data);
-            parseReceivedData(data);
-        });
-
-        tcpClient.on('error', (err) => {
-            isConnected = false;
-            console.error('TCP Error:', err);
-            // Send status to all windows
-            BrowserWindow.getAllWindows().forEach(win => {
-                win.webContents.send('connection-status', { connected: false, error: err.message });
-            });
-            reject({ success: false, message: err.message });
-        });
-
-        tcpClient.on('close', () => {
-            isConnected = false;
-            console.log('Connection closed');
-            // Send status to all windows
-            BrowserWindow.getAllWindows().forEach(win => {
-                win.webContents.send('connection-status', { connected: false });
-            });
-        });
-
-        // Connection timeout
         setTimeout(() => {
-            if (!isConnected) {
-                tcpClient.destroy();
-                reject({ success: false, message: 'Connection timeout' });
+            tcpClient = new net.Socket();
+
+            // Enable address/port reuse to avoid TIME_WAIT issues
+            tcpClient.setNoDelay(true); // Disable Nagle's algorithm for real-time data
+
+            // Set up connection options
+            const connectionOptions = {
+                port: port,
+                host: host
+            };
+
+            // Only set localPort if clientPort is specified (non-zero)
+            if (clientPort && clientPort > 0) {
+                connectionOptions.localPort = clientPort;
+                console.log('Binding to client port:', clientPort);
             }
-        }, 5000);
+
+            tcpClient.connect(connectionOptions, () => {
+                const clientPortMsg = clientPort > 0 ? ` (client port: ${clientPort})` : '';
+                console.log(`Connected to TCP server: ${host}:${port}${clientPortMsg}`);
+
+                // Update state and broadcast
+                broadcastStateChange('connection', { connected: true, error: null });
+
+                resolve({ success: true, message: 'Connected successfully' });
+            });
+
+            tcpClient.on('data', (data) => {
+                console.log('Received data:', data);
+                parseReceivedData(data);
+            });
+
+            tcpClient.on('error', (err) => {
+                console.error('TCP Error:', err);
+
+                // Provide user-friendly error message for port conflicts
+                let errorMessage = err.message;
+                if (err.code === 'EADDRINUSE' && clientPort > 0) {
+                    errorMessage = `Client port ${clientPort} is still in use from previous connection. Please wait 30 seconds or set client port to 0 (auto-assign).`;
+                }
+
+                // Update state and broadcast
+                broadcastStateChange('connection', { connected: false, error: errorMessage });
+
+                // Clean up on error
+                if (tcpClient) {
+                    tcpClient.removeAllListeners();
+                    tcpClient.destroy();
+                    tcpClient = null;
+                }
+
+                reject({ success: false, message: errorMessage });
+            });
+
+            tcpClient.on('close', () => {
+                console.log('Connection closed');
+
+                // Update state and broadcast
+                broadcastStateChange('connection', { connected: false, error: null });
+            });
+
+            // Connection timeout
+            setTimeout(() => {
+                if (!appState.connection.connected) {
+                    if (tcpClient) {
+                        tcpClient.removeAllListeners();
+                        tcpClient.destroy();
+                        tcpClient = null;
+                    }
+                    reject({ success: false, message: 'Connection timeout' });
+                }
+            }, 5000);
+        }, reconnectDelay);
     });
 });
 
@@ -199,10 +265,8 @@ function parseReceivedData(data) {
                 ints.push(value);
             }
 
-            // Send data to all windows
-            BrowserWindow.getAllWindows().forEach(win => {
-                win.webContents.send('tcp-data-received', { bools, ints });
-            });
+            // Update state and broadcast
+            broadcastStateChange('tcpData', { bools, ints });
 
             console.log('Parsed data - Bools:', bools.length, 'Ints:', ints.length);
         } else {
@@ -215,7 +279,7 @@ function parseReceivedData(data) {
 
 // Send 16 integers
 ipcMain.handle('tcp-send', async (event, integers) => {
-    if (!tcpClient || !isConnected) {
+    if (!tcpClient || !appState.connection.connected) {
         return { success: false, message: 'Not connected to server' };
     }
 
@@ -235,7 +299,7 @@ ipcMain.handle('tcp-send', async (event, integers) => {
 
 // Send command
 ipcMain.handle('tcp-send-command', async (event, commandId) => {
-    if (!tcpClient || !isConnected) {
+    if (!tcpClient || !appState.connection.connected) {
         return { success: false, message: 'Not connected to server' };
     }
 
@@ -254,11 +318,50 @@ ipcMain.handle('tcp-send-command', async (event, commandId) => {
 // Disconnect handler
 ipcMain.handle('tcp-disconnect', async () => {
     if (tcpClient) {
-        tcpClient.destroy();
-        isConnected = false;
-        return { success: true, message: 'Disconnected' };
+        try {
+            // Gracefully close the connection
+            tcpClient.end();
+
+            // Force destroy after a short timeout if not closed gracefully
+            setTimeout(() => {
+                if (tcpClient) {
+                    tcpClient.removeAllListeners();
+                    tcpClient.destroy();
+                    tcpClient = null;
+                }
+            }, 500);
+
+            return { success: true, message: 'Disconnected' };
+        } catch (error) {
+            console.error('Error during disconnect:', error);
+            // Force cleanup on error
+            if (tcpClient) {
+                tcpClient.removeAllListeners();
+                tcpClient.destroy();
+                tcpClient = null;
+            }
+            return { success: true, message: 'Disconnected with errors' };
+        }
     }
     return { success: false, message: 'No active connection' };
+});
+
+// ========== UNIFIED STATE HANDLERS ==========
+// Get entire app state (for new windows)
+ipcMain.handle('get-app-state', async () => {
+    return getAppState();
+});
+
+// Update theme
+ipcMain.handle('set-theme', async (event, theme) => {
+    broadcastStateChange('theme', theme);
+    return { success: true };
+});
+
+// Update language
+ipcMain.handle('set-language', async (event, language) => {
+    broadcastStateChange('language', language);
+    return { success: true };
 });
 
 // Open settings window handler
@@ -282,35 +385,4 @@ ipcMain.handle('window-maximize', () => {
 
 ipcMain.handle('window-close', () => {
     mainWindow.close();
-});
-
-// Theme Management Handlers
-ipcMain.handle('set-theme', async (event, theme) => {
-    currentTheme = theme;
-    // Broadcast theme change to all windows
-    BrowserWindow.getAllWindows().forEach(win => {
-        win.webContents.send('theme-changed', theme);
-    });
-    return { success: true };
-});
-
-ipcMain.handle('get-theme', async () => {
-    return currentTheme;
-});
-
-// Language Management Handlers
-ipcMain.handle('set-language', async (event, language) => {
-    currentLanguage = language;
-    // Broadcast language change to all windows EXCEPT the sender
-    const senderWebContents = event.sender;
-    BrowserWindow.getAllWindows().forEach(win => {
-        if (win.webContents !== senderWebContents) {
-            win.webContents.send('language-changed', language);
-        }
-    });
-    return { success: true };
-});
-
-ipcMain.handle('get-language', async () => {
-    return currentLanguage;
 });

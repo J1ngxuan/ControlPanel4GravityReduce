@@ -974,34 +974,10 @@ function setupInputListeners() {
     }
 }
 
-// Listen for storage changes from other windows
-window.addEventListener('storage', (e) => {
-    if (e.key && e.key.startsWith('int-')) {
-        const inputId = e.key;
-        const input = document.getElementById(inputId);
-        if (input && e.newValue !== null) {
-            input.value = e.newValue;
-        }
-    } else if (e.key === 'tcp-host' && hostInput && e.newValue) {
-        hostInput.value = e.newValue;
-    } else if (e.key === 'tcp-port' && portInput && e.newValue) {
-        portInput.value = e.newValue;
-    } else if (e.key === 'tcp-client-port' && clientPortInput && e.newValue) {
-        clientPortInput.value = e.newValue;
-    } else if (e.key === 'auto-send-enabled' && autoSendToggle && e.newValue) {
-        const newCheckedState = e.newValue === 'true';
-        autoSendToggle.checked = newCheckedState;
-
-        // If this is the main window, update auto-send based on the new state
-        if (isMainWindow()) {
-            if (newCheckedState && isConnected && !autoSendInterval) {
-                startAutoSend();
-            } else if (!newCheckedState && autoSendInterval) {
-                stopAutoSend();
-            }
-        }
-    }
-});
+// ========== REMOVED: localStorage cross-window sync ==========
+// The old localStorage 'storage' event listener has been removed.
+// All cross-window synchronization now uses unified IPC state management.
+// Settings still persist to localStorage, but sync happens via IPC broadcasts.
 
 // ========== JOYSTICK AND SLIDER CONTROLS ==========
 
@@ -1400,7 +1376,7 @@ function initializeAxisControls() {
 }
 
 // Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Load saved settings first
     loadSettings();
 
@@ -1414,9 +1390,28 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInputListeners();
     initializeAxisControls(); // Initialize joystick and slider
 
-    // Only update connection status if we have the necessary elements
-    if (connectBtn || disconnectBtn) {
-        updateConnectionStatus(false);
+    // ========== UNIFIED STATE INITIALIZATION ==========
+    // Get entire app state from main process
+    try {
+        const appState = await window.electronAPI.getAppState();
+
+        // Apply connection state
+        if (appState.connection) {
+            updateConnectionStatus(appState.connection.connected);
+            if (appState.connection.error && logContainer) {
+                addLog(`Connection error: ${appState.connection.error}`, 'error');
+            }
+        }
+
+        // Apply theme state (theme-manager.js will handle this)
+        // Apply language state (language-manager.js will handle this)
+
+        console.log('App state loaded:', appState);
+    } catch (error) {
+        console.error('Failed to get app state:', error);
+        if (connectBtn || disconnectBtn) {
+            updateConnectionStatus(false);
+        }
     }
 
     // Only log if log container exists
