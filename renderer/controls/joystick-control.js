@@ -55,6 +55,14 @@ class JoystickControl {
         // Listen for theme changes to redraw canvas
         window.addEventListener('themeChanged', () => this.draw());
 
+        // Listen for language changes to update status text
+        window.addEventListener('languageChanged', () => {
+            const currentCmd = stateManager.get('currentCommand');
+            if (currentCmd !== undefined) {
+                this.updateStatus(currentCmd);
+            }
+        });
+
         // Listen for events from other controls
         eventBus.on('joystick:mouseup', () => {
             if (this.isActive) {
@@ -232,15 +240,24 @@ class JoystickControl {
     updateStatus(command) {
         if (!this.statusElement) return;
 
-        const commandNames = {
-            [COMMANDS.X_PLUS]: 'X+ Active',
-            [COMMANDS.X_MINUS]: 'X- Active',
-            [COMMANDS.Y_PLUS]: 'Y+ Active',
-            [COMMANDS.Y_MINUS]: 'Y- Active',
-            0: 'Inactive'
+        // Use translation system for status text
+        const t = (key) => {
+            return typeof window.t === 'function' ? window.t(key) : key;
         };
 
-        this.statusElement.textContent = commandNames[command] || 'Inactive';
+        let statusText = t('inactive');
+
+        if (command === COMMANDS.X_PLUS) {
+            statusText = `X+ ${t('active')}`;
+        } else if (command === COMMANDS.X_MINUS) {
+            statusText = `X- ${t('active')}`;
+        } else if (command === COMMANDS.Y_PLUS) {
+            statusText = `Y+ ${t('active')}`;
+        } else if (command === COMMANDS.Y_MINUS) {
+            statusText = `Y- ${t('active')}`;
+        }
+
+        this.statusElement.textContent = statusText;
         const statusContainer = this.statusElement.parentElement;
 
         // Only show active state (green) if command is acknowledged

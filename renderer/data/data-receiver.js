@@ -64,6 +64,26 @@ class DataReceiver {
     }
 
     /**
+     * Get boolean label (with translation support)
+     * @param {number} index - Boolean index (0-39)
+     * @returns {string} Translated label
+     */
+    getBoolLabel(index) {
+        // Try to get current language from window
+        const currentLang = typeof window.getCurrentLanguage === 'function'
+            ? window.getCurrentLanguage()
+            : 'en';
+
+        // Try to get translated labels
+        if (window.LOCALES && window.LOCALES[currentLang] && window.LOCALES[currentLang].boolLabels) {
+            return window.LOCALES[currentLang].boolLabels[index] || BOOL_LABELS[index];
+        }
+
+        // Fallback to English
+        return BOOL_LABELS[index];
+    }
+
+    /**
      * Update boolean display
      * @param {boolean[]} bools - Array of 40 booleans
      */
@@ -74,16 +94,18 @@ class DataReceiver {
             const boolItem = document.getElementById(`bool-${index}`);
             if (!boolItem) return;
 
+            const label = this.getBoolLabel(index);
+
             if (value) {
                 boolItem.className = 'bool-item bool-true';
                 boolItem.innerHTML = `
-                    <div class="bool-label">${BOOL_LABELS[index]}</div>
+                    <div class="bool-label">${label}</div>
                     <div class="bool-value">TRUE</div>
                 `;
             } else {
                 boolItem.className = 'bool-item bool-false';
                 boolItem.innerHTML = `
-                    <div class="bool-label">${BOOL_LABELS[index]}</div>
+                    <div class="bool-label">${label}</div>
                     <div class="bool-value">FALSE</div>
                 `;
             }

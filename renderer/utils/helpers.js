@@ -30,7 +30,17 @@ export function isMainWindow() {
  * @returns {string} Human-readable command name
  */
 export function getCommandName(command) {
-    const names = {
+    // Use the translation system if available
+    if (typeof window !== 'undefined' && window.t) {
+        const translatedName = window.t(`commands.${command}`);
+        // If translation exists and is not the key itself, return it
+        if (translatedName && translatedName !== `commands.${command}`) {
+            return translatedName;
+        }
+    }
+
+    // Fallback to English if translation not available
+    const fallbackNames = {
         1: 'Start Experiment',
         2: 'Stop Experiment',
         3: 'Driver Power ON',
@@ -52,7 +62,7 @@ export function getCommandName(command) {
         30: 'Clear Faults',
         0: 'None'
     };
-    return names[command] || 'Unknown';
+    return fallbackNames[command] || 'Unknown';
 }
 
 // Export all helpers as default object for convenience

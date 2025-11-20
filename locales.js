@@ -12,6 +12,8 @@ const LOCALES = {
         disconnected: 'Disconnected',
         connected: 'Connected',
         autoSend50Hz: 'Auto-Send (50Hz)',
+        autoSend: 'Auto-Send',
+        debugEcho: 'Debug Echo',
 
         // Tabs
         tabCommands: 'Control Commands',
@@ -40,6 +42,7 @@ const LOCALES = {
         xyAxisControl: 'X/Y Axis Control',
         zAxisControl: 'Z Axis Control',
         inactive: 'Inactive',
+        active: 'Active',
 
         // Position & Special Functions
         positionSpecialFunctions: 'Position & Special Functions',
@@ -86,15 +89,33 @@ const LOCALES = {
         theme: 'Theme',
         language: 'Language',
         connectionSettings: 'Connection Settings',
+        protocol: 'Protocol:',
+        tcpDescription: 'TCP (Reliable, Connection-Oriented)',
+        udpDescription: 'UDP (Fast, Connectionless)',
+        tcpSettings: 'TCP Settings',
+        tcpHost: 'TCP Host:',
+        tcpServerPort: 'TCP Server Port:',
+        tcpClientPort: 'TCP Client Port:',
+        tcpClientPortHint: '0=auto (recommended)',
+        tcpTimeWaitWarning: '⚠️ Specific ports may require 30s wait after disconnect due to TIME_WAIT state',
+        udpSettings: 'UDP Settings',
+        udpListeningPort: 'UDP Listening Port:',
+        udpListeningPortHint: 'Local port to receive data',
+        udpTargetHost: 'UDP Target Host:',
+        udpTargetHostHint: 'Remote host to send data',
+        udpTargetPort: 'UDP Target Port:',
+        udpTargetPortHint: 'Remote port to send data',
         host: 'Host:',
         port: 'Port:',
         connect: 'Connect',
         disconnect: 'Disconnect',
+        sendDataDebug: 'Send Data (Debug)',
 
         // Control Parameters
         controlParameters: 'Control Parameters',
         speedControl: 'Speed Control',
         speedMode: 'Speed Mode:',
+        speedModeTooltip: '0:Low 1:Med 2:High 3:CustomXY 4:CustomForce',
         targetSpeed: 'Target Speed:',
         positionControl: 'Position Control',
         targetX: 'Target X:',
@@ -102,7 +123,8 @@ const LOCALES = {
         targetZ: 'Target Z:',
         operationSettings: 'Operation Settings',
         operationMode: 'Operation Mode:',
-        pidParameter: 'PID Parameter:',
+        pidParameter: 'PID Set',
+        reserved: 'Reserved',
         forceControl: 'Force Control',
         targetForce: 'Target Force:',
         tensionControl: 'Tension Control',
@@ -115,7 +137,15 @@ const LOCALES = {
         customParam5: 'Custom Param 5:',
         communicationControl: 'Communication & Control',
         commFlag: 'Comm Flag:',
+        commFlagTooltip: '0:No Connection, 1234:Connected',
         controlCommand: 'Control Command:',
+
+        // Unit hints
+        unitRange04: '0-4',
+        unitMmS: 'mm/s',
+        unitMm: 'mm',
+        unitStatus: 'Status',
+        unitCmdId: 'Cmd ID',
 
         // Command names
         commands: {
@@ -151,6 +181,8 @@ const LOCALES = {
         disconnected: '已断开',
         connected: '已连接',
         autoSend50Hz: '自动发送 (50Hz)',
+        autoSend: '自动发送',
+        debugEcho: '调试回显',
 
         // Tabs
         tabCommands: '控制命令',
@@ -179,6 +211,7 @@ const LOCALES = {
         xyAxisControl: 'X/Y轴控制',
         zAxisControl: 'Z轴控制',
         inactive: '未激活',
+        active: '激活',
 
         // Position & Special Functions
         positionSpecialFunctions: '位置和特殊功能',
@@ -225,15 +258,33 @@ const LOCALES = {
         theme: '主题',
         language: '语言',
         connectionSettings: '连接设置',
+        protocol: '协议:',
+        tcpDescription: 'TCP (可靠、面向连接)',
+        udpDescription: 'UDP (快速、无连接)',
+        tcpSettings: 'TCP设置',
+        tcpHost: 'TCP主机:',
+        tcpServerPort: 'TCP服务器端口:',
+        tcpClientPort: 'TCP客户端端口:',
+        tcpClientPortHint: '0=自动分配（推荐）',
+        tcpTimeWaitWarning: '⚠️ 特定端口在断开连接后可能需要等待30秒（TIME_WAIT状态）',
+        udpSettings: 'UDP设置',
+        udpListeningPort: 'UDP监听端口:',
+        udpListeningPortHint: '接收数据的本地端口',
+        udpTargetHost: 'UDP目标主机:',
+        udpTargetHostHint: '发送数据的远程主机',
+        udpTargetPort: 'UDP目标端口:',
+        udpTargetPortHint: '发送数据的远程端口',
         host: '主机:',
         port: '端口:',
         connect: '连接',
         disconnect: '断开',
+        sendDataDebug: '发送数据（调试）',
 
         // Control Parameters
         controlParameters: '控制参数',
         speedControl: '速度控制',
         speedMode: '速度模式:',
+        speedModeTooltip: '0:低速 1:中速 2:高速 3:自定义XY 4:自定义力',
         targetSpeed: '目标速度:',
         positionControl: '位置控制',
         targetX: '目标X:',
@@ -241,7 +292,8 @@ const LOCALES = {
         targetZ: '目标Z:',
         operationSettings: '操作设置',
         operationMode: '操作模式:',
-        pidParameter: 'PID参数:',
+        pidParameter: 'PID设定',
+        reserved: '保留',
         forceControl: '力控制',
         targetForce: '目标力:',
         tensionControl: '张力控制',
@@ -254,7 +306,15 @@ const LOCALES = {
         customParam5: '自定义参数5:',
         communicationControl: '通信与控制',
         commFlag: '通信标志:',
+        commFlagTooltip: '0:无连接, 1234:已连接',
         controlCommand: '控制命令:',
+
+        // Unit hints
+        unitRange04: '0-4',
+        unitMmS: '毫米/秒',
+        unitMm: '毫米',
+        unitStatus: '状态',
+        unitCmdId: '命令ID',
 
         // Command names
         commands: {

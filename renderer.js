@@ -131,7 +131,7 @@ function updateConnectionStatus(connected) {
 
     if (connected) {
         if (statusIndicator) {
-            statusIndicator.textContent = 'Connected';
+            statusIndicator.textContent = window.t('connected');
             statusIndicator.className = 'status-connected';
         }
         if (connectBtn) connectBtn.disabled = true;
@@ -152,7 +152,7 @@ function updateConnectionStatus(connected) {
         }
     } else {
         if (statusIndicator) {
-            statusIndicator.textContent = 'Disconnected';
+            statusIndicator.textContent = window.t('disconnected');
             statusIndicator.className = 'status-disconnected';
         }
         if (connectBtn) connectBtn.disabled = false;
@@ -209,7 +209,7 @@ function startAutoSend() {
 
     // Update UI
     if (autoSendIndicator) {
-        autoSendIndicator.textContent = 'ON';
+        autoSendIndicator.textContent = window.t('on');
         autoSendIndicator.className = 'auto-send-indicator active';
     }
 }
@@ -220,7 +220,7 @@ function stopAutoSend() {
 
     // Update UI
     if (autoSendIndicator) {
-        autoSendIndicator.textContent = 'OFF';
+        autoSendIndicator.textContent = window.t('off');
         autoSendIndicator.className = 'auto-send-indicator';
     }
 }

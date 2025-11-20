@@ -41,35 +41,35 @@
 
             <!-- Protocol Selection -->
             <div class="protocol-selector" style="margin-bottom: 20px; padding: 10px; background: var(--bg-secondary); border-radius: 4px;">
-                <label style="font-weight: bold; margin-bottom: 8px; display: block;">Protocol:</label>
+                <label style="font-weight: bold; margin-bottom: 8px; display: block;" data-i18n="protocol">Protocol:</label>
                 <div style="display: flex; gap: 20px;">
                     <label style="cursor: pointer;">
                         <input type="radio" name="protocol" value="tcp" id="protocol-tcp" checked>
-                        <span style="margin-left: 5px;">TCP (Reliable, Connection-Oriented)</span>
+                        <span style="margin-left: 5px;" data-i18n="tcpDescription">TCP (Reliable, Connection-Oriented)</span>
                     </label>
                     <label style="cursor: pointer;">
                         <input type="radio" name="protocol" value="udp" id="protocol-udp">
-                        <span style="margin-left: 5px;">UDP (Fast, Connectionless)</span>
+                        <span style="margin-left: 5px;" data-i18n="udpDescription">UDP (Fast, Connectionless)</span>
                     </label>
                 </div>
             </div>
 
             <!-- TCP Settings -->
             <div id="tcp-settings" class="connection-controls">
-                <h3 style="margin: 10px 0;">TCP Settings</h3>
+                <h3 style="margin: 10px 0;" data-i18n="tcpSettings">TCP Settings</h3>
                 <div class="input-group">
-                    <label for="tcp-host">TCP Host:</label>
+                    <label for="tcp-host" data-i18n="tcpHost">TCP Host:</label>
                     <input type="text" id="tcp-host" value="localhost" placeholder="localhost">
                 </div>
                 <div class="input-group">
-                    <label for="tcp-port">TCP Server Port:</label>
+                    <label for="tcp-port" data-i18n="tcpServerPort">TCP Server Port:</label>
                     <input type="number" id="tcp-port" value="8080" placeholder="8080">
                 </div>
                 <div class="input-group">
-                    <label for="tcp-client-port">TCP Client Port:</label>
+                    <label for="tcp-client-port" data-i18n="tcpClientPort">TCP Client Port:</label>
                     <input type="number" id="tcp-client-port" value="0" placeholder="0 (auto)" min="0" max="65535">
-                    <span class="unit-hint">0=auto (recommended)</span>
-                    <small style="display: block; color: var(--text-secondary); font-size: 0.85em; margin-top: 4px;">
+                    <span class="unit-hint" data-i18n="tcpClientPortHint">0=auto (recommended)</span>
+                    <small style="display: block; color: var(--text-secondary); font-size: 0.85em; margin-top: 4px;" data-i18n="tcpTimeWaitWarning">
                         ⚠️ Specific ports may require 30s wait after disconnect due to TIME_WAIT state
                     </small>
                 </div>
@@ -77,21 +77,21 @@
 
             <!-- UDP Settings -->
             <div id="udp-settings" class="connection-controls" style="display: none;">
-                <h3 style="margin: 10px 0;">UDP Settings</h3>
+                <h3 style="margin: 10px 0;" data-i18n="udpSettings">UDP Settings</h3>
                 <div class="input-group">
-                    <label for="udp-listening-port">UDP Listening Port:</label>
+                    <label for="udp-listening-port" data-i18n="udpListeningPort">UDP Listening Port:</label>
                     <input type="number" id="udp-listening-port" value="8081" placeholder="8081" min="0" max="65535">
-                    <span class="unit-hint">Local port to receive data</span>
+                    <span class="unit-hint" data-i18n="udpListeningPortHint">Local port to receive data</span>
                 </div>
                 <div class="input-group">
-                    <label for="udp-target-host">UDP Target Host:</label>
+                    <label for="udp-target-host" data-i18n="udpTargetHost">UDP Target Host:</label>
                     <input type="text" id="udp-target-host" value="localhost" placeholder="localhost">
-                    <span class="unit-hint">Remote host to send data</span>
+                    <span class="unit-hint" data-i18n="udpTargetHostHint">Remote host to send data</span>
                 </div>
                 <div class="input-group">
-                    <label for="udp-target-port">UDP Target Port:</label>
+                    <label for="udp-target-port" data-i18n="udpTargetPort">UDP Target Port:</label>
                     <input type="number" id="udp-target-port" value="8080" placeholder="8080" min="0" max="65535">
-                    <span class="unit-hint">Remote port to send data</span>
+                    <span class="unit-hint" data-i18n="udpTargetPortHint">Remote port to send data</span>
                 </div>
             </div>
 
@@ -105,7 +105,7 @@
                         <input type="checkbox" id="auto-send-toggle">
                         <strong data-i18n="autoSend50Hz">Auto-Send (50Hz)</strong>
                     </label>
-                    <span class="auto-send-indicator" id="auto-send-indicator">OFF</span>
+                    <span class="auto-send-indicator" id="auto-send-indicator" data-i18n="off">OFF</span>
                 </div>
             </div>
         </div>
@@ -119,13 +119,13 @@
                     <h3 data-i18n="speedControl">Speed Control</h3>
                     <div class="integer-input">
                         <label for="int-0" data-i18n="speedMode">Speed Mode:</label>
-                        <input type="number" id="int-0" value="0" min="0" max="4" title="0:Low 1:Med 2:High 3:CustomXY 4:CustomForce">
-                        <span class="unit-hint">0-4</span>
+                        <input type="number" id="int-0" value="0" min="0" max="4">
+                        <span class="unit-hint" data-i18n="unitRange04">0-4</span>
                     </div>
                     <div class="integer-input">
                         <label for="int-1" data-i18n="targetSpeed">Target Speed:</label>
                         <input type="number" id="int-1" value="15" min="0" max="65535">
-                        <span class="unit-hint">mm/s</span>
+                        <span class="unit-hint" data-i18n="unitMmS">mm/s</span>
                     </div>
                 </div>
 
@@ -135,17 +135,17 @@
                     <div class="integer-input">
                         <label for="int-2" data-i18n="targetX">Target X:</label>
                         <input type="number" id="int-2" value="0" min="0" max="65535">
-                        <span class="unit-hint">mm</span>
+                        <span class="unit-hint" data-i18n="unitMm">mm</span>
                     </div>
                     <div class="integer-input">
                         <label for="int-3" data-i18n="targetY">Target Y:</label>
                         <input type="number" id="int-3" value="0" min="0" max="65535">
-                        <span class="unit-hint">mm</span>
+                        <span class="unit-hint" data-i18n="unitMm">mm</span>
                     </div>
                     <div class="integer-input">
                         <label for="int-4" data-i18n="targetZ">Target Z:</label>
                         <input type="number" id="int-4" value="0" min="0" max="65535">
-                        <span class="unit-hint">mm</span>
+                        <span class="unit-hint" data-i18n="unitMm">mm</span>
                     </div>
                 </div>
 
@@ -158,11 +158,11 @@
                         <span class="unit-hint" data-i18n="pidParameter">PID Set</span>
                     </div>
                     <div class="integer-input">
-                        <label for="int-6">Reserved 6:</label>
+                        <label for="int-6"><span data-i18n="reserved">Reserved</span> 6:</label>
                         <input type="number" id="int-6" value="0" min="0" max="65535">
                     </div>
                     <div class="integer-input">
-                        <label for="int-7">Reserved 7:</label>
+                        <label for="int-7"><span data-i18n="reserved">Reserved</span> 7:</label>
                         <input type="number" id="int-7" value="0" min="0" max="65535">
                     </div>
                 </div>
@@ -172,41 +172,41 @@
                     <h3 data-i18n="communicationControl">Communication & Control</h3>
                     <div class="integer-input">
                         <label for="int-8" data-i18n="commFlag">Comm Flag:</label>
-                        <input type="number" id="int-8" value="1234" min="0" max="65535" title="0:No Connection, 1234:Connected">
-                        <span class="unit-hint">Status</span>
+                        <input type="number" id="int-8" value="1234" min="0" max="65535">
+                        <span class="unit-hint" data-i18n="unitStatus">Status</span>
                     </div>
                     <div class="integer-input">
                         <label for="int-9" data-i18n="controlCommand">Control Command:</label>
                         <input type="number" id="int-9" value="0" min="0" max="65535" readonly>
-                        <span class="unit-hint">Cmd ID</span>
+                        <span class="unit-hint" data-i18n="unitCmdId">Cmd ID</span>
                     </div>
                     <div class="integer-input">
-                        <label for="int-10">Reserved 10:</label>
+                        <label for="int-10"><span data-i18n="reserved">Reserved</span> 10:</label>
                         <input type="number" id="int-10" value="0" min="0" max="65535">
                     </div>
                     <div class="integer-input">
-                        <label for="int-11">Reserved 11:</label>
+                        <label for="int-11"><span data-i18n="reserved">Reserved</span> 11:</label>
                         <input type="number" id="int-11" value="0" min="0" max="65535">
                     </div>
                     <div class="integer-input">
-                        <label for="int-12">Reserved 12:</label>
+                        <label for="int-12"><span data-i18n="reserved">Reserved</span> 12:</label>
                         <input type="number" id="int-12" value="0" min="0" max="65535">
                     </div>
                     <div class="integer-input">
-                        <label for="int-13">Reserved 13:</label>
+                        <label for="int-13"><span data-i18n="reserved">Reserved</span> 13:</label>
                         <input type="number" id="int-13" value="0" min="0" max="65535">
                     </div>
                     <div class="integer-input">
-                        <label for="int-14">Reserved 14:</label>
+                        <label for="int-14"><span data-i18n="reserved">Reserved</span> 14:</label>
                         <input type="number" id="int-14" value="0" min="0" max="65535">
                     </div>
                     <div class="integer-input">
-                        <label for="int-15">Reserved 15:</label>
+                        <label for="int-15"><span data-i18n="reserved">Reserved</span> 15:</label>
                         <input type="number" id="int-15" value="0" min="0" max="65535">
                     </div>
                 </div>
             </div>
-            <button id="send-btn" class="btn btn-debug" disabled>Send Data (Debug)</button>
+            <button id="send-btn" class="btn btn-debug" disabled data-i18n="sendDataDebug">Send Data (Debug)</button>
         </div>
     </div>
 

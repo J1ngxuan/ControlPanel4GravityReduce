@@ -1,6 +1,6 @@
 {
   "name": "equipment-control-panel",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Equipment Control Panel - Windows application for TCP equipment control with 50Hz auto-send",
   "main": "main.js",
   "scripts": {

@@ -32,6 +32,14 @@ class SliderControl {
         // Disable initially (will be enabled on connection)
         this.slider.disabled = true;
 
+        // Listen for language changes to update status text
+        window.addEventListener('languageChanged', () => {
+            const currentCmd = stateManager.get('currentCommand');
+            if (currentCmd !== undefined) {
+                this.updateStatus(currentCmd);
+            }
+        });
+
         // Listen for reset events from joystick
         eventBus.on('slider:reset', () => this.reset());
     }
@@ -103,13 +111,20 @@ class SliderControl {
     updateStatus(command) {
         if (!this.statusElement) return;
 
-        const commandNames = {
-            [COMMANDS.Z_PLUS]: 'Z+ Active',
-            [COMMANDS.Z_MINUS]: 'Z- Active',
-            0: 'Inactive'
+        // Use translation system for status text
+        const t = (key) => {
+            return typeof window.t === 'function' ? window.t(key) : key;
         };
 
-        this.statusElement.textContent = commandNames[command] || 'Inactive';
+        let statusText = t('inactive');
+
+        if (command === COMMANDS.Z_PLUS) {
+            statusText = `Z+ ${t('active')}`;
+        } else if (command === COMMANDS.Z_MINUS) {
+            statusText = `Z- ${t('active')}`;
+        }
+
+        this.statusElement.textContent = statusText;
         const statusContainer = this.statusElement.parentElement;
 
         // Only show active state (green) if command is acknowledged

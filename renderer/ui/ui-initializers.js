@@ -17,6 +17,11 @@ class UIInitializers {
      */
     init(electronAPI) {
         this.electronAPI = electronAPI;
+
+        // Listen for language changes to update displays
+        window.addEventListener('languageChanged', () => {
+            this.updateDisplayLabels();
+        });
     }
 
     /**
@@ -143,6 +148,42 @@ class UIInitializers {
         }
 
         logger.info('Displays initialized (40 bools, 10 ints)');
+    }
+
+    /**
+     * Update display labels when language changes (without reinitializing)
+     */
+    updateDisplayLabels() {
+        // Get current language labels
+        const currentLang = window.getCurrentLanguage ? window.getCurrentLanguage() : 'en';
+        const locales = window.LOCALES || {};
+        const labels = locales[currentLang] || locales['en'] || {};
+        const boolLabels = labels.boolLabels || [];
+        const intLabels = labels.intLabels || [];
+
+        // Update boolean labels
+        for (let i = 0; i < 40; i++) {
+            const boolItem = document.getElementById(`bool-${i}`);
+            if (boolItem) {
+                const labelElement = boolItem.querySelector('.bool-label');
+                if (labelElement) {
+                    labelElement.textContent = boolLabels[i] || `Status ${i+1}`;
+                }
+            }
+        }
+
+        // Update integer labels
+        for (let i = 0; i < 10; i++) {
+            const intItem = document.getElementById(`int-display-${i}`);
+            if (intItem) {
+                const labelElement = intItem.querySelector('.int-item-label');
+                if (labelElement) {
+                    labelElement.textContent = intLabels[i] || `Int ${i}`;
+                }
+            }
+        }
+
+        logger.info('Display labels updated for language change');
     }
 
     /**
