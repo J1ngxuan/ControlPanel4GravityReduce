@@ -29,17 +29,19 @@
       "renderer.js",
       "config.js",
       "validation.js",
-      "settings-manager.js",
-      "data-handler.js",
-      "ui-manager.js",
-      "connection-manager.js",
       "theme-manager.js",
-      "locales.js",
       "language-manager.js",
+      "locales.js",
       "index.html",
       "settings.html",
       "styles.css",
+      "renderer/**/*",
       "package.json"
+    ],
+    "asarUnpack": [
+      "*.html",
+      "renderer.js",
+      "renderer/**/*"
     ],
     "win": {
       "target": [
