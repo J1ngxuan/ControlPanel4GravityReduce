@@ -40,23 +40,23 @@
             <h2 data-i18n="connectionSettings">Connection Settings</h2>
 
             <!-- Protocol Selection -->
-            <div class="protocol-selector" style="margin-bottom: 20px; padding: 10px; background: var(--bg-secondary); border-radius: 4px;">
-                <label style="font-weight: bold; margin-bottom: 8px; display: block;" data-i18n="protocol">Protocol:</label>
-                <div style="display: flex; gap: 20px;">
-                    <label style="cursor: pointer;">
+            <div class="protocol-selector">
+                <label data-i18n="protocol">Protocol:</label>
+                <div class="protocol-options">
+                    <label>
                         <input type="radio" name="protocol" value="tcp" id="protocol-tcp" checked>
-                        <span style="margin-left: 5px;" data-i18n="tcpDescription">TCP (Reliable, Connection-Oriented)</span>
+                        <span data-i18n="tcp">TCP</span>
                     </label>
-                    <label style="cursor: pointer;">
+                    <label>
                         <input type="radio" name="protocol" value="udp" id="protocol-udp">
-                        <span style="margin-left: 5px;" data-i18n="udpDescription">UDP (Fast, Connectionless)</span>
+                        <span data-i18n="udp">UDP</span>
                     </label>
                 </div>
             </div>
 
             <!-- TCP Settings -->
             <div id="tcp-settings" class="connection-controls">
-                <h3 style="margin: 10px 0;" data-i18n="tcpSettings">TCP Settings</h3>
+                <h3 data-i18n="tcpSettings">TCP Settings</h3>
                 <div class="input-group">
                     <label for="tcp-host" data-i18n="tcpHost">TCP Host:</label>
                     <input type="text" id="tcp-host" value="localhost" placeholder="localhost">
@@ -67,36 +67,29 @@
                 </div>
                 <div class="input-group">
                     <label for="tcp-client-port" data-i18n="tcpClientPort">TCP Client Port:</label>
-                    <input type="number" id="tcp-client-port" value="0" placeholder="0 (auto)" min="0" max="65535">
-                    <span class="unit-hint" data-i18n="tcpClientPortHint">0=auto (recommended)</span>
-                    <small style="display: block; color: var(--text-secondary); font-size: 0.85em; margin-top: 4px;" data-i18n="tcpTimeWaitWarning">
-                        ⚠️ Specific ports may require 30s wait after disconnect due to TIME_WAIT state
-                    </small>
+                    <input type="number" id="tcp-client-port" value="0" placeholder="0" min="0" max="65535">
                 </div>
             </div>
 
             <!-- UDP Settings -->
             <div id="udp-settings" class="connection-controls" style="display: none;">
-                <h3 style="margin: 10px 0;" data-i18n="udpSettings">UDP Settings</h3>
+                <h3 data-i18n="udpSettings">UDP Settings</h3>
                 <div class="input-group">
                     <label for="udp-listening-port" data-i18n="udpListeningPort">UDP Listening Port:</label>
                     <input type="number" id="udp-listening-port" value="8081" placeholder="8081" min="0" max="65535">
-                    <span class="unit-hint" data-i18n="udpListeningPortHint">Local port to receive data</span>
                 </div>
                 <div class="input-group">
                     <label for="udp-target-host" data-i18n="udpTargetHost">UDP Target Host:</label>
                     <input type="text" id="udp-target-host" value="localhost" placeholder="localhost">
-                    <span class="unit-hint" data-i18n="udpTargetHostHint">Remote host to send data</span>
                 </div>
                 <div class="input-group">
                     <label for="udp-target-port" data-i18n="udpTargetPort">UDP Target Port:</label>
                     <input type="number" id="udp-target-port" value="8080" placeholder="8080" min="0" max="65535">
-                    <span class="unit-hint" data-i18n="udpTargetPortHint">Remote port to send data</span>
                 </div>
             </div>
 
             <!-- Connection Controls -->
-            <div class="connection-controls" style="margin-top: 20px;">
+            <div class="connection-controls">
                 <button id="connect-btn" class="btn btn-primary" data-i18n="connect">Connect</button>
                 <button id="disconnect-btn" class="btn btn-secondary" data-i18n="disconnect" disabled>Disconnect</button>
                 <span id="status-indicator" class="status-disconnected" data-i18n="disconnected">Disconnected</span>
@@ -119,13 +112,19 @@
                     <h3 data-i18n="speedControl">Speed Control</h3>
                     <div class="integer-input">
                         <label for="int-0" data-i18n="speedMode">Speed Mode:</label>
-                        <input type="number" id="int-0" value="0" min="0" max="4">
-                        <span class="unit-hint" data-i18n="unitRange04">0-4</span>
+                        <select id="int-0" class="speed-mode-select">
+                            <option value="0" data-i18n="speedModeLow">Low Speed (Preset)</option>
+                            <option value="1" data-i18n="speedModeMed">Med Speed (Preset)</option>
+                            <option value="2" data-i18n="speedModeHigh">High Speed (Preset)</option>
+                            <option value="3" data-i18n="speedModeCustom2D">Custom 2D Speed</option>
+                            <option value="4" data-i18n="speedModeCustomForce">Custom Force Speed</option>
+                        </select>
                     </div>
                     <div class="integer-input">
-                        <label for="int-1" data-i18n="targetSpeed">Target Speed:</label>
-                        <input type="number" id="int-1" value="15" min="0" max="65535">
+                        <label for="int-1" id="target-speed-label" data-i18n="targetSpeed">Target Speed:</label>
+                        <input type="number" id="int-1" value="15" min="0" max="65535" disabled>
                         <span class="unit-hint" data-i18n="unitMmS">mm/s</span>
+                        <span class="unit-hint" id="speed-preset-note" data-i18n="speedPresetNote" style="display: block; font-size: 0.85em; color: var(--text-secondary); margin-top: 2px;">(Preset - Target Speed ignored)</span>
                     </div>
                 </div>
 

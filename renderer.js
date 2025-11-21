@@ -19,6 +19,7 @@ import sliderControl from './renderer/controls/slider-control.js';
 
 // Import settings and UI modules
 import settingsManager from './renderer/settings/settings-manager.js';
+import speedModeHandler from './renderer/settings/speed-mode-handler.js';
 import uiInitializers from './renderer/ui/ui-initializers.js';
 
 // Import utility helpers
@@ -390,6 +391,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load saved settings first
     loadSettings();
+
+    // Initialize speed mode handler (after settings are loaded)
+    speedModeHandler.init();
 
     // Initialize only the components that exist in this window
     initializeDisplays();

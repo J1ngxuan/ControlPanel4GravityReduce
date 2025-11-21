@@ -444,6 +444,44 @@ h3 {
     flex-wrap: wrap;
 }
 
+/* Protocol Selector */
+.protocol-selector {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 4px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.protocol-selector > label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: block;
+    color: var(--text-primary);
+    transition: color 0.3s;
+}
+
+.protocol-options {
+    display: flex;
+    gap: 20px;
+}
+
+.protocol-options label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-primary);
+    transition: color 0.3s;
+}
+
+.protocol-options input[type="radio"] {
+    margin-right: 6px;
+    cursor: pointer;
+}
+
 .input-group {
     display: flex;
     align-items: center;
@@ -663,6 +701,36 @@ h3 {
     outline: none;
     border-color: var(--accent-primary);
     background: var(--bg-primary);
+}
+
+.integer-input input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-secondary);
+}
+
+.integer-input select {
+    padding: 5px 8px;
+    border: 1px solid var(--border-primary);
+    border-radius: 2px;
+    font-size: 13px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+    cursor: pointer;
+    min-width: 200px;
+}
+
+.integer-input select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background: var(--bg-primary);
+}
+
+.integer-input select option {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 8px;
 }
 
 .unit-hint {
