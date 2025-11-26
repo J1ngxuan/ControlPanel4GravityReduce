@@ -44,14 +44,18 @@ const LOCALES = {
         inactive: 'Inactive',
         active: 'Active',
 
-        // Position & Special Functions
-        positionSpecialFunctions: 'Position & Special Functions',
+        // Position Control
+        positionControl: 'Position Control',
         xPositionMove: 'X Position Move',
         yPositionMove: 'Y Position Move',
         zPositionMove: 'Z Position Move',
         xyPositionMove: 'XY Position Move',
+
+        // Function Control
+        functionControl: 'Function Control',
         precisionAlign: 'Precision Align',
         tensionSetting: 'Tension Setting',
+        tensionReset: 'Tension Reset',
 
         // Emergency Stops
         emergencyStops: 'Emergency Stops',
@@ -187,6 +191,7 @@ const LOCALES = {
             21: 'Precision Align',
             22: 'Tension Setting',
             23: 'Emergency Stop + Clear Pulse',
+            24: 'Tension Reset',
             30: 'Clear Faults'
         }
     },
@@ -233,14 +238,18 @@ const LOCALES = {
         inactive: '未激活',
         active: '激活',
 
-        // Position & Special Functions
-        positionSpecialFunctions: '位置和特殊功能',
+        // Position Control
+        positionControl: '位置控制',
         xPositionMove: 'X位置移动',
         yPositionMove: 'Y位置移动',
         zPositionMove: 'Z位置移动',
         xyPositionMove: 'XY位置移动',
+
+        // Function Control
+        functionControl: '功能控制',
         precisionAlign: '精密对准',
         tensionSetting: '张力设置',
+        tensionReset: '张力复位',
 
         // Emergency Stops
         emergencyStops: '紧急停止',
@@ -376,6 +385,7 @@ const LOCALES = {
             21: '精密对准',
             22: '张力设置',
             23: '紧急停止 + 清除脉冲',
+            24: '张力复位',
             30: '清除故障'
         }
     }
