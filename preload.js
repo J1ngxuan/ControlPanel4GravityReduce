@@ -21,6 +21,19 @@ contextBridge.exposeInMainWorld('electronAPI', {
     windowMaximize: () => ipcRenderer.invoke('window-maximize'),
     windowClose: () => ipcRenderer.invoke('window-close'),
 
+    // ========== MOTION CAPTURE ==========
+    mocapStart: (config) => ipcRenderer.invoke('mocap-start', config),
+    mocapStop: () => ipcRenderer.invoke('mocap-stop'),
+    onMocapFrame: (callback) => {
+        ipcRenderer.on('mocap-frame', (event, frameData) => callback(frameData));
+    },
+    onMocapStatus: (callback) => {
+        ipcRenderer.on('mocap-status', (event, status) => callback(status));
+    },
+    onMocapError: (callback) => {
+        ipcRenderer.on('mocap-error', (event, error) => callback(error));
+    },
+
     // ========== UNIFIED STATE MANAGEMENT ==========
     // Get entire app state (for initialization)
     getAppState: () => ipcRenderer.invoke('get-app-state'),

@@ -82,6 +82,7 @@
         <div class="tab-navigation">
             <button class="tab-button active" data-tab="commands" data-i18n="tabCommands">Control Commands</button>
             <button class="tab-button" data-tab="monitor" data-i18n="tabMonitor">Monitor</button>
+            <button class="tab-button" data-tab="mocap" data-i18n="tabMocap">Motion Capture</button>
             <button id="settings-btn" class="btn-settings" title="Settings"><span data-i18n="settingsBtn">⚙️ Settings</span></button>
         </div>
 
@@ -242,6 +243,160 @@
         </div>
         </div>
         <!-- End of Tab 3 -->
+
+        <!-- Tab 4: Motion Capture -->
+        <div class="tab-content" id="tab-mocap">
+            <div class="section mocap-section">
+                <h2 data-i18n="mocapTitle">Motion Capture</h2>
+
+                <!-- Mocap Connection Settings -->
+                <div class="mocap-connection-group">
+                    <h3 data-i18n="mocapConnectionSettings">Connection Settings</h3>
+                    <div class="mocap-connection-controls">
+                        <div class="input-group">
+                            <label for="mocap-multicast" data-i18n="mocapMulticast">Multicast Group:</label>
+                            <input type="text" id="mocap-multicast" value="239.239.239.52" placeholder="239.239.239.52">
+                        </div>
+                        <div class="input-group">
+                            <label for="mocap-port" data-i18n="mocapPort">Port:</label>
+                            <input type="number" id="mocap-port" value="5231" min="1" max="65535">
+                        </div>
+                        <button class="btn btn-primary" id="mocap-connect-btn" data-i18n="mocapConnect">Connect</button>
+                        <button class="btn btn-secondary" id="mocap-disconnect-btn" data-i18n="mocapDisconnect" disabled>Disconnect</button>
+                    </div>
+                    <div class="mocap-status-bar">
+                        <span data-i18n="mocapStatus">Status:</span>
+                        <span id="mocap-status-indicator" class="status-disconnected" data-i18n="disconnected">Disconnected</span>
+                        <span class="mocap-fps-display">FPS: <span id="mocap-fps-value">0</span></span>
+                    </div>
+                </div>
+
+                <!-- Mocap Enable Toggle and Rigid Body Selection -->
+                <div class="mocap-control-group">
+                    <h3 data-i18n="mocapDataControl">Data Control</h3>
+                    <div class="mocap-enable-row">
+                        <label class="mocap-enable-label">
+                            <input type="checkbox" id="mocap-enable-toggle">
+                            <span data-i18n="mocapEnableSending">Enable Mocap Data Sending</span>
+                        </label>
+                        <span id="mocap-enable-indicator" class="auto-send-indicator" data-i18n="off">OFF</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="mocap-rigid-body-select" data-i18n="mocapRigidBody">Rigid Body:</label>
+                        <select id="mocap-rigid-body-select">
+                            <option value="" data-i18n="mocapNoRigidBody">-- No Rigid Body --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- XYZ Offset Settings -->
+                <div class="mocap-offset-group">
+                    <h3 data-i18n="mocapOffsets">Position Offsets (mm)</h3>
+                    <div class="mocap-offset-inputs">
+                        <div class="input-group">
+                            <label for="mocap-offset-x" data-i18n="mocapOffsetX">X Offset:</label>
+                            <input type="number" id="mocap-offset-x" value="0" step="1">
+                            <span class="unit-hint" data-i18n="unitMm">mm</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="mocap-offset-y" data-i18n="mocapOffsetY">Y Offset:</label>
+                            <input type="number" id="mocap-offset-y" value="0" step="1">
+                            <span class="unit-hint" data-i18n="unitMm">mm</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="mocap-offset-z" data-i18n="mocapOffsetZ">Z Offset:</label>
+                            <input type="number" id="mocap-offset-z" value="0" step="1">
+                            <span class="unit-hint" data-i18n="unitMm">mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Data Display -->
+                <div class="mocap-data-display">
+                    <h3 data-i18n="mocapLiveData">Live Data</h3>
+                    <div class="mocap-data-grid">
+                        <!-- Position Display -->
+                        <div class="mocap-data-column">
+                            <h4 data-i18n="mocapPosition">Position (mm)</h4>
+                            <div class="mocap-value-row">
+                                <span class="mocap-axis-label">X:</span>
+                                <span class="mocap-value" id="mocap-pos-x">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-axis-label">Y:</span>
+                                <span class="mocap-value" id="mocap-pos-y">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-axis-label">Z:</span>
+                                <span class="mocap-value" id="mocap-pos-z">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Velocity Display -->
+                        <div class="mocap-data-column">
+                            <h4 data-i18n="mocapVelocity">Velocity (mm/s)</h4>
+                            <div class="mocap-value-row">
+                                <span class="mocap-axis-label">X:</span>
+                                <span class="mocap-value" id="mocap-vel-x">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-axis-label">Y:</span>
+                                <span class="mocap-value" id="mocap-vel-y">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-axis-label">Z:</span>
+                                <span class="mocap-value" id="mocap-vel-z">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Send Values Display (int-10 to int-15) -->
+                        <div class="mocap-data-column mocap-send-values">
+                            <h4 data-i18n="mocapSendValues">Send Values (int-10 to int-15)</h4>
+                            <div class="mocap-value-row">
+                                <span class="mocap-int-label">int-10:</span>
+                                <span class="mocap-value" id="mocap-int-10">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-int-label">int-11:</span>
+                                <span class="mocap-value" id="mocap-int-11">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-int-label">int-12:</span>
+                                <span class="mocap-value" id="mocap-int-12">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-int-label">int-13:</span>
+                                <span class="mocap-value" id="mocap-int-13">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-int-label">int-14:</span>
+                                <span class="mocap-value" id="mocap-int-14">0</span>
+                            </div>
+                            <div class="mocap-value-row">
+                                <span class="mocap-int-label">int-15:</span>
+                                <span class="mocap-value" id="mocap-int-15">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Raw Data Display (for debugging) -->
+                <div class="mocap-raw-data">
+                    <h3 data-i18n="mocapRawData">Raw Data (Debug)</h3>
+                    <div class="mocap-raw-grid">
+                        <div class="mocap-raw-column">
+                            <span class="mocap-raw-label" data-i18n="mocapRawPosition">Raw Position:</span>
+                            <span class="mocap-raw-value" id="mocap-raw-pos">X: 0.00, Y: 0.00, Z: 0.00</span>
+                        </div>
+                        <div class="mocap-raw-column">
+                            <span class="mocap-raw-label" data-i18n="mocapRawVelocity">Raw Velocity:</span>
+                            <span class="mocap-raw-value" id="mocap-raw-vel">X: 0.00, Y: 0.00, Z: 0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End of Tab 4 -->
     </div>
 
     <script src="locales.js"></script>

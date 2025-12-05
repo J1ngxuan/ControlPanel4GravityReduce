@@ -18,6 +18,7 @@ const LOCALES = {
         // Tabs
         tabCommands: 'Control Commands',
         tabMonitor: 'Monitor',
+        tabMocap: 'Motion Capture',
         settingsBtn: 'Settings',
 
         // Current command display
@@ -166,6 +167,30 @@ const LOCALES = {
         unitStatus: 'Status',
         unitCmdId: 'Cmd ID',
 
+        // Motion Capture
+        mocapTitle: 'Motion Capture',
+        mocapConnectionSettings: 'Connection Settings',
+        mocapMulticast: 'Multicast Group:',
+        mocapPort: 'Port:',
+        mocapConnect: 'Connect',
+        mocapDisconnect: 'Disconnect',
+        mocapStatus: 'Status:',
+        mocapDataControl: 'Data Control',
+        mocapEnableSending: 'Enable Mocap Data Sending',
+        mocapRigidBody: 'Rigid Body:',
+        mocapNoRigidBody: '-- No Rigid Body --',
+        mocapOffsets: 'Position Offsets (mm)',
+        mocapOffsetX: 'X Offset:',
+        mocapOffsetY: 'Y Offset:',
+        mocapOffsetZ: 'Z Offset:',
+        mocapLiveData: 'Live Data',
+        mocapPosition: 'Position (mm)',
+        mocapVelocity: 'Velocity (mm/s)',
+        mocapSendValues: 'Send Values (int-10 to int-15)',
+        mocapRawData: 'Raw Data (Debug)',
+        mocapRawPosition: 'Raw Position:',
+        mocapRawVelocity: 'Raw Velocity:',
+
         // Command names
         commands: {
             1: 'Start Experiment',
@@ -212,6 +237,7 @@ const LOCALES = {
         // Tabs
         tabCommands: '控制命令',
         tabMonitor: '监控',
+        tabMocap: '动作捕捉',
         settingsBtn: '设置',
 
         // Current command display
@@ -359,6 +385,30 @@ const LOCALES = {
         unitMm: '毫米',
         unitStatus: '状态',
         unitCmdId: '命令ID',
+
+        // Motion Capture
+        mocapTitle: '动作捕捉',
+        mocapConnectionSettings: '连接设置',
+        mocapMulticast: '组播地址:',
+        mocapPort: '端口:',
+        mocapConnect: '连接',
+        mocapDisconnect: '断开',
+        mocapStatus: '状态:',
+        mocapDataControl: '数据控制',
+        mocapEnableSending: '启用动捕数据发送',
+        mocapRigidBody: '刚体:',
+        mocapNoRigidBody: '-- 无刚体 --',
+        mocapOffsets: '位置偏移 (毫米)',
+        mocapOffsetX: 'X偏移:',
+        mocapOffsetY: 'Y偏移:',
+        mocapOffsetZ: 'Z偏移:',
+        mocapLiveData: '实时数据',
+        mocapPosition: '位置 (毫米)',
+        mocapVelocity: '速度 (毫米/秒)',
+        mocapSendValues: '发送值 (int-10 到 int-15)',
+        mocapRawData: '原始数据 (调试)',
+        mocapRawPosition: '原始位置:',
+        mocapRawVelocity: '原始速度:',
 
         // Command names
         commands: {

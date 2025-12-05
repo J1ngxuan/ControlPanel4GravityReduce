@@ -191,5 +191,13 @@ export const Events = {
 
     // Settings events
     SETTINGS_LOADED: 'settings:loaded',
-    SETTINGS_SAVED: 'settings:saved'
+    SETTINGS_SAVED: 'settings:saved',
+
+    // Motion Capture events
+    MOCAP_STARTED: 'mocap:started',
+    MOCAP_STOPPED: 'mocap:stopped',
+    MOCAP_ERROR: 'mocap:error',
+    MOCAP_FRAME_RECEIVED: 'mocap:frame-received',
+    MOCAP_DATA_PROCESSED: 'mocap:data-processed',
+    MOCAP_RIGID_BODIES_UPDATED: 'mocap:rigid-bodies-updated'
 };

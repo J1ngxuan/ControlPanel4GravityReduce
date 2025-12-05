@@ -1,13 +1,24 @@
-//This is a multi-window Electron app. Any settings/state changes must sync across all windows via IPC. 
+//This is a multi-window Electron app. Any settings/state changes must sync across all windows via IPC.
 // Check for existing windows and implement synchronization from the start.
 const { app, BrowserWindow, ipcMain } = require('electron');
 const net = require('net');
 const dgram = require('dgram');
 const path = require('path');
+
+// Import NokovReceiver for motion capture
+let NokovReceiver;
+try {
+    NokovReceiver = require('nokov-mocap-reader').NokovReceiver;
+} catch (err) {
+    console.warn('nokov-mocap-reader not installed. Motion capture features will be unavailable.');
+    NokovReceiver = null;
+}
+
 let mainWindow;
 let settingsWindow = null;
 let tcpClient = null;
 let udpSocket = null;
+let mocapReceiver = null;
 
 // ========== UNIFIED STATE MANAGEMENT ==========
 // Centralized application state - single source of truth
@@ -166,6 +177,11 @@ app.on('window-all-closed', function () {
         udpSocket.removeAllListeners();
         udpSocket.close();
         udpSocket = null;
+    }
+    // Clean up mocap receiver
+    if (mocapReceiver) {
+        mocapReceiver.stop().catch(err => console.error('Error stopping mocap:', err));
+        mocapReceiver = null;
     }
     if (process.platform !== 'darwin') app.quit();
 });
@@ -553,4 +569,92 @@ ipcMain.handle('window-maximize', () => {
 
 ipcMain.handle('window-close', () => {
     mainWindow.close();
+});
+
+// ========== MOTION CAPTURE HANDLERS ==========
+// Start motion capture receiver
+ipcMain.handle('mocap-start', async (event, config) => {
+    if (!NokovReceiver) {
+        return { success: false, message: 'nokov-mocap-reader package not installed' };
+    }
+
+    // Stop existing receiver if any
+    if (mocapReceiver) {
+        try {
+            await mocapReceiver.stop();
+        } catch (err) {
+            console.warn('Error stopping existing mocap receiver:', err);
+        }
+        mocapReceiver = null;
+    }
+
+    try {
+        mocapReceiver = new NokovReceiver({
+            port: config.port || 5231,
+            multicastGroup: config.multicastGroup || '239.239.239.52',
+            frameTimeout: config.frameTimeout || 50
+        });
+
+        // Handle frame events
+        mocapReceiver.on('frame', (frame) => {
+            // Send frame data to renderer
+            BrowserWindow.getAllWindows().forEach(win => {
+                win.webContents.send('mocap-frame', {
+                    frameId: frame.frameId,
+                    timestamp: frame.timestamp ? frame.timestamp.toString() : null,
+                    markerCount: frame.markerCount || 0,
+                    rigidBodyCount: frame.rigidBodyCount || 0,
+                    rigidBodies: (frame.rigidBodies || []).map(rb => ({
+                        id: rb.id,
+                        name: rb.name,
+                        position: rb.position,
+                        rotation: rb.rotation,
+                        trackingValid: rb.trackingValid,
+                        meanError: rb.meanError
+                    }))
+                });
+            });
+        });
+
+        // Handle partial frames
+        mocapReceiver.on('partialFrame', (frame) => {
+            console.log('Partial frame received:', frame.frameId);
+        });
+
+        // Handle errors
+        mocapReceiver.on('error', (err) => {
+            console.error('Mocap error:', err);
+            BrowserWindow.getAllWindows().forEach(win => {
+                win.webContents.send('mocap-error', { message: err.message });
+            });
+        });
+
+        // Start receiving
+        const addressInfo = await mocapReceiver.start();
+        console.log(`Mocap receiver started on ${config.multicastGroup}:${config.port}`);
+
+        return { success: true, message: 'Mocap receiver started', address: addressInfo };
+    } catch (error) {
+        console.error('Failed to start mocap receiver:', error);
+        mocapReceiver = null;
+        return { success: false, message: error.message };
+    }
+});
+
+// Stop motion capture receiver
+ipcMain.handle('mocap-stop', async () => {
+    if (!mocapReceiver) {
+        return { success: false, message: 'Mocap receiver not running' };
+    }
+
+    try {
+        await mocapReceiver.stop();
+        mocapReceiver = null;
+        console.log('Mocap receiver stopped');
+        return { success: true, message: 'Mocap receiver stopped' };
+    } catch (error) {
+        console.error('Error stopping mocap receiver:', error);
+        mocapReceiver = null;
+        return { success: false, message: error.message };
+    }
 });

@@ -36,7 +36,22 @@ class StateManager {
             // Slider control state
             zSlider: null,
             sliderStatus: null,
-            isSliderActive: false
+            isSliderActive: false,
+
+            // Motion Capture state
+            mocapReceiving: false,
+            mocapEnabled: false,
+            mocapFps: 0,
+            mocapFramesReceived: 0,
+            mocapSelectedRigidBody: null,
+            mocapRigidBodies: [],
+            mocapOffsets: { x: 0, y: 0, z: 0 },
+            mocapPosition: { x: 0, y: 0, z: 0 },           // Signed values for display
+            mocapVelocity: { x: 0, y: 0, z: 0 },           // Signed values for display
+            mocapPositionUnsigned: { x: 0, y: 0, z: 0 },   // Unsigned values for PLC
+            mocapVelocityUnsigned: { x: 0, y: 0, z: 0 },   // Unsigned values for PLC
+            mocapRawPosition: { x: 0, y: 0, z: 0 },
+            mocapRawVelocity: { x: 0, y: 0, z: 0 }
         };
 
         // Event listeners for state changes
@@ -200,7 +215,17 @@ class StateManager {
             lastSentDebugInt: null,
             isJoystickActive: false,
             joystickPosition: { x: 0, y: 0 },
-            isSliderActive: false
+            isSliderActive: false,
+            // Mocap state reset
+            mocapReceiving: false,
+            mocapFps: 0,
+            mocapFramesReceived: 0,
+            mocapPosition: { x: 0, y: 0, z: 0 },
+            mocapVelocity: { x: 0, y: 0, z: 0 },
+            mocapPositionUnsigned: { x: 0, y: 0, z: 0 },
+            mocapVelocityUnsigned: { x: 0, y: 0, z: 0 },
+            mocapRawPosition: { x: 0, y: 0, z: 0 },
+            mocapRawVelocity: { x: 0, y: 0, z: 0 }
         });
     }
 

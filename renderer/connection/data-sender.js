@@ -11,6 +11,7 @@ class DataSender {
     constructor() {
         this.electronAPI = null;
         this.autoSendInterval = null;
+        this.mocapProcessor = null;
     }
 
     /**
@@ -19,6 +20,14 @@ class DataSender {
      */
     init(electronAPI) {
         this.electronAPI = electronAPI;
+    }
+
+    /**
+     * Set the mocap processor reference for getting mocap values
+     * @param {Object} processor - The mocap processor instance
+     */
+    setMocapProcessor(processor) {
+        this.mocapProcessor = processor;
     }
 
     /**
@@ -74,6 +83,12 @@ class DataSender {
         const debugModeEnabled = stateManager.get('debugModeEnabled');
         const lastReceivedDebugInt = stateManager.get('lastReceivedDebugInt');
 
+        // Get mocap values if processor is available and enabled
+        let mocapValues = null;
+        if (this.mocapProcessor && this.mocapProcessor.isEnabled()) {
+            mocapValues = this.mocapProcessor.getIntegerValues();
+        }
+
         for (let i = 0; i < 16; i++) {
             let value;
 
@@ -91,6 +106,11 @@ class DataSender {
                 if (input) {
                     input.value = lastReceivedDebugInt; // Update display if element exists
                 }
+            } else if (i >= 10 && i <= 15 && mocapValues) {
+                // Int-10 to Int-15 are mocap values when enabled
+                // int-10: Position X, int-11: Position Y, int-12: Position Z
+                // int-13: Velocity X, int-14: Velocity Y, int-15: Velocity Z
+                value = mocapValues[`int${i}`];
             } else {
                 const input = document.getElementById(`int-${i}`);
                 if (input) {

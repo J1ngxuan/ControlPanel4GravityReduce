@@ -22,6 +22,11 @@ import settingsManager from './renderer/settings/settings-manager.js';
 import speedModeHandler from './renderer/settings/speed-mode-handler.js';
 import uiInitializers from './renderer/ui/ui-initializers.js';
 
+// Import mocap modules
+import mocapReceiver from './renderer/mocap/mocap-receiver.js';
+import mocapProcessor from './renderer/mocap/mocap-processor.js';
+import mocapUI from './renderer/mocap/mocap-ui.js';
+
 // Import utility helpers
 import { addLog, isMainWindow, getCommandName } from './renderer/utils/helpers.js';
 
@@ -394,6 +399,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize speed mode handler (after settings are loaded)
     speedModeHandler.init();
+
+    // Initialize mocap modules
+    mocapProcessor.init();
+    mocapReceiver.init(window.electronAPI);
+    mocapUI.init();
+
+    // Connect mocap processor to data sender
+    dataSender.setMocapProcessor(mocapProcessor);
 
     // Initialize only the components that exist in this window
     initializeDisplays();

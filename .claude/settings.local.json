@@ -15,7 +15,9 @@
       "Bash(dir /b \"F:\\Electron\\ControlPanel4GravityReduce\" 2)",
       "Bash(dir /b /s \"F:\\Electron\\ControlPanel4GravityReduce\\renderer\" 2)",
       "Bash(dir /b F:ElectronControlPanel4GravityReduce 2)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(tree:*)",
+      "Bash(timeout /t 5 /nobreak)"
     ],
     "deny": [],
     "ask": []
