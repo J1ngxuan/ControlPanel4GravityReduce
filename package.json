@@ -28,10 +28,13 @@
       "preload.js",
       "renderer.js",
       "config.js",
-      "validation.js",
       "theme-manager.js",
       "language-manager.js",
       "locales.js",
+      "connection-manager.js",
+      "data-handler.js",
+      "settings-manager.js",
+      "ui-manager.js",
       "index.html",
       "settings.html",
       "styles.css",
@@ -62,8 +65,14 @@
       "createStartMenuShortcut": true
     }
   },
+  "dependencies": {
+    "nokov-mocap-reader": "file:../nokov-mocap-reader"
+  },
   "devDependencies": {
     "electron": "^28.0.0",
     "electron-builder": "^26.0.12"
-  }
+  },
+  "bundledDependencies": [
+    "nokov-mocap-reader"
+  ]
 }

@@ -17,7 +17,9 @@
       "Bash(dir /b F:ElectronControlPanel4GravityReduce 2)",
       "Bash(findstr:*)",
       "Bash(tree:*)",
-      "Bash(timeout /t 5 /nobreak)"
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(dir /b \"F:\\Electron\\ControlPanel4GravityReduce\\*.js\")",
+      "Bash(dir \"F:\\Electron\\ControlPanel4GravityReduce\\*.js\" /b)"
     ],
     "deny": [],
     "ask": []
