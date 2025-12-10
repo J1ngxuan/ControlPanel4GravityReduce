@@ -10,29 +10,31 @@
     <div class="container settings-container">
         <div class="header-container">
             <h1 data-i18n="configurationSettings">Configuration Settings</h1>
-            <button class="btn-settings" id="language-toggle-btn" title="Toggle Language">
-                <span id="language-text">EN</span>
-                <span data-i18n="language">Language</span>
-            </button>
-            <button class="btn-settings" id="theme-toggle-btn" title="Toggle Theme">
-                <svg width="16" height="16" viewBox="0 0 16 16" id="theme-icon">
-                    <!-- Moon icon (for dark mode) -->
-                    <path id="moon-icon" d="M8 2a6 6 0 1 0 6 6 7 7 0 0 1-6-6z" fill="currentColor"/>
-                    <!-- Sun icon (for bright mode) -->
-                    <g id="sun-icon" style="display: none;">
-                        <circle cx="8" cy="8" r="3" fill="currentColor"/>
-                        <line x1="8" y1="1" x2="8" y2="3" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="8" y1="13" x2="8" y2="15" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="1" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="13" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="3" y1="3" x2="4.5" y2="4.5" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="11.5" y1="11.5" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="13" y1="3" x2="11.5" y2="4.5" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="4.5" y1="11.5" x2="3" y2="13" stroke="currentColor" stroke-width="1.5"/>
-                    </g>
-                </svg>
-                <span data-i18n="theme">Theme</span>
-            </button>
+            <div class="header-actions">
+                <button class="btn-settings" id="language-toggle-btn" title="Toggle Language">
+                    <span id="language-text">EN</span>
+                    <span data-i18n="language">Language</span>
+                </button>
+                <button class="btn-settings" id="theme-toggle-btn" title="Toggle Theme">
+                    <svg width="16" height="16" viewBox="0 0 16 16" id="theme-icon">
+                        <!-- Moon icon (for dark mode) -->
+                        <path id="moon-icon" d="M8 2a6 6 0 1 0 6 6 7 7 0 0 1-6-6z" fill="currentColor"/>
+                        <!-- Sun icon (for bright mode) -->
+                        <g id="sun-icon" style="display: none;">
+                            <circle cx="8" cy="8" r="3" fill="currentColor"/>
+                            <line x1="8" y1="1" x2="8" y2="3" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="8" y1="13" x2="8" y2="15" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="1" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="13" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="3" y1="3" x2="4.5" y2="4.5" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="11.5" y1="11.5" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="13" y1="3" x2="11.5" y2="4.5" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="4.5" y1="11.5" x2="3" y2="13" stroke="currentColor" stroke-width="1.5"/>
+                        </g>
+                    </svg>
+                    <span data-i18n="theme">Theme</span>
+                </button>
+            </div>
         </div>
 
         <!-- Connection Section -->
@@ -43,61 +45,71 @@
             <div class="protocol-selector">
                 <label data-i18n="protocol">Protocol:</label>
                 <div class="protocol-options">
-                    <label>
+                    <label class="protocol-option">
                         <input type="radio" name="protocol" value="tcp" id="protocol-tcp" checked>
-                        <span data-i18n="tcp">TCP</span>
+                        <span class="protocol-label" data-i18n="tcp">TCP</span>
                     </label>
-                    <label>
+                    <label class="protocol-option">
                         <input type="radio" name="protocol" value="udp" id="protocol-udp">
-                        <span data-i18n="udp">UDP</span>
+                        <span class="protocol-label" data-i18n="udp">UDP</span>
                     </label>
                 </div>
             </div>
 
             <!-- TCP Settings -->
-            <div id="tcp-settings" class="connection-controls">
+            <div id="tcp-settings" class="protocol-settings-panel">
                 <h3 data-i18n="tcpSettings">TCP Settings</h3>
-                <div class="input-group">
-                    <label for="tcp-host" data-i18n="tcpHost">TCP Host:</label>
-                    <input type="text" id="tcp-host" value="localhost" placeholder="localhost">
-                </div>
-                <div class="input-group">
-                    <label for="tcp-port" data-i18n="tcpServerPort">TCP Server Port:</label>
-                    <input type="number" id="tcp-port" value="8080" placeholder="8080">
-                </div>
-                <div class="input-group">
-                    <label for="tcp-client-port" data-i18n="tcpClientPort">TCP Client Port:</label>
-                    <input type="number" id="tcp-client-port" value="0" placeholder="0" min="0" max="65535">
+                <div class="settings-grid">
+                    <div class="input-group">
+                        <label for="tcp-host" data-i18n="tcpHost">TCP Host:</label>
+                        <input type="text" id="tcp-host" value="localhost" placeholder="localhost">
+                    </div>
+                    <div class="input-group">
+                        <label for="tcp-port" data-i18n="tcpServerPort">TCP Server Port:</label>
+                        <input type="number" id="tcp-port" value="8080" placeholder="8080">
+                    </div>
+                    <div class="input-group">
+                        <label for="tcp-client-port" data-i18n="tcpClientPort">TCP Client Port:</label>
+                        <input type="number" id="tcp-client-port" value="0" placeholder="0" min="0" max="65535">
+                    </div>
                 </div>
             </div>
 
             <!-- UDP Settings -->
-            <div id="udp-settings" class="connection-controls" style="display: none;">
+            <div id="udp-settings" class="protocol-settings-panel" style="display: none;">
                 <h3 data-i18n="udpSettings">UDP Settings</h3>
-                <div class="input-group">
-                    <label for="udp-listening-port" data-i18n="udpListeningPort">UDP Listening Port:</label>
-                    <input type="number" id="udp-listening-port" value="8081" placeholder="8081" min="0" max="65535">
-                </div>
-                <div class="input-group">
-                    <label for="udp-target-host" data-i18n="udpTargetHost">UDP Target Host:</label>
-                    <input type="text" id="udp-target-host" value="localhost" placeholder="localhost">
-                </div>
-                <div class="input-group">
-                    <label for="udp-target-port" data-i18n="udpTargetPort">UDP Target Port:</label>
-                    <input type="number" id="udp-target-port" value="8080" placeholder="8080" min="0" max="65535">
+                <div class="settings-grid">
+                    <div class="input-group">
+                        <label for="udp-listening-port" data-i18n="udpListeningPort">UDP Listening Port:</label>
+                        <input type="number" id="udp-listening-port" value="8081" placeholder="8081" min="0" max="65535">
+                    </div>
+                    <div class="input-group">
+                        <label for="udp-target-host" data-i18n="udpTargetHost">UDP Target Host:</label>
+                        <input type="text" id="udp-target-host" value="localhost" placeholder="localhost">
+                    </div>
+                    <div class="input-group">
+                        <label for="udp-target-port" data-i18n="udpTargetPort">UDP Target Port:</label>
+                        <input type="number" id="udp-target-port" value="8080" placeholder="8080" min="0" max="65535">
+                    </div>
                 </div>
             </div>
 
             <!-- Connection Controls -->
-            <div class="connection-controls">
-                <button id="connect-btn" class="btn btn-primary" data-i18n="connect">Connect</button>
-                <button id="disconnect-btn" class="btn btn-secondary" data-i18n="disconnect" disabled>Disconnect</button>
+            <div class="connection-actions">
+                <div class="connection-buttons">
+                    <button id="connect-btn" class="btn btn-primary" data-i18n="connect">Connect</button>
+                    <button id="disconnect-btn" class="btn btn-secondary" data-i18n="disconnect" disabled>Disconnect</button>
+                </div>
                 <span id="status-indicator" class="status-disconnected" data-i18n="disconnected">Disconnected</span>
-                <div class="input-group auto-send-group">
-                    <label>
+                <div class="auto-send-group">
+                    <label class="auto-send-label">
                         <input type="checkbox" id="auto-send-toggle">
-                        <strong data-i18n="autoSend50Hz">Auto-Send (50Hz)</strong>
+                        <span data-i18n="autoSend">Auto-Send</span>
                     </label>
+                    <div class="latency-input-group">
+                        <input type="number" id="send-latency" class="latency-input" value="20" min="1" max="10000" placeholder="20">
+                        <span class="unit-label">ms</span>
+                    </div>
                     <span class="auto-send-indicator" id="auto-send-indicator" data-i18n="off">OFF</span>
                 </div>
             </div>
@@ -124,29 +136,10 @@
                         <label for="int-1" id="target-speed-label" data-i18n="targetSpeed">Target Speed:</label>
                         <input type="number" id="int-1" value="15" min="0" max="65535" disabled>
                         <span class="unit-hint" data-i18n="unitMmS">mm/s</span>
-                        <span class="unit-hint" id="speed-preset-note" data-i18n="speedPresetNote" style="display: block; font-size: 0.85em; color: var(--text-secondary); margin-top: 2px;">(Preset - Target Speed ignored)</span>
                     </div>
+                    <span class="preset-note" id="speed-preset-note" data-i18n="speedPresetNote">(Preset - Target Speed ignored)</span>
                 </div>
 
-                <!-- Position Control -->
-                <div class="control-group">
-                    <h3 data-i18n="positionControl">Position Control</h3>
-                    <div class="integer-input">
-                        <label for="int-2" data-i18n="targetX">Target X:</label>
-                        <input type="number" id="int-2" value="0" min="0" max="65535">
-                        <span class="unit-hint" data-i18n="unitMm">mm</span>
-                    </div>
-                    <div class="integer-input">
-                        <label for="int-3" data-i18n="targetY">Target Y:</label>
-                        <input type="number" id="int-3" value="0" min="0" max="65535">
-                        <span class="unit-hint" data-i18n="unitMm">mm</span>
-                    </div>
-                    <div class="integer-input">
-                        <label for="int-4" data-i18n="targetZ">Target Z:</label>
-                        <input type="number" id="int-4" value="0" min="0" max="65535">
-                        <span class="unit-hint" data-i18n="unitMm">mm</span>
-                    </div>
-                </div>
 
                 <!-- Operation Mode -->
                 <div class="control-group">
@@ -179,29 +172,36 @@
                         <input type="number" id="int-9" value="0" min="0" max="65535" readonly>
                         <span class="unit-hint" data-i18n="unitCmdId">Cmd ID</span>
                     </div>
-                    <div class="integer-input">
-                        <label for="int-10"><span data-i18n="reserved">Reserved</span> 10:</label>
-                        <input type="number" id="int-10" value="0" min="0" max="65535">
-                    </div>
-                    <div class="integer-input">
-                        <label for="int-11"><span data-i18n="reserved">Reserved</span> 11:</label>
-                        <input type="number" id="int-11" value="0" min="0" max="65535">
-                    </div>
-                    <div class="integer-input">
-                        <label for="int-12"><span data-i18n="reserved">Reserved</span> 12:</label>
-                        <input type="number" id="int-12" value="0" min="0" max="65535">
-                    </div>
-                    <div class="integer-input">
-                        <label for="int-13"><span data-i18n="reserved">Reserved</span> 13:</label>
-                        <input type="number" id="int-13" value="0" min="0" max="65535">
-                    </div>
-                    <div class="integer-input">
-                        <label for="int-14"><span data-i18n="reserved">Reserved</span> 14:</label>
-                        <input type="number" id="int-14" value="0" min="0" max="65535">
-                    </div>
-                    <div class="integer-input">
-                        <label for="int-15"><span data-i18n="reserved">Reserved</span> 15:</label>
-                        <input type="number" id="int-15" value="0" min="0" max="65535">
+                </div>
+
+                <!-- Reserved Parameters -->
+                <div class="control-group">
+                    <h3 data-i18n="reserved">Reserved</h3>
+                    <div class="reserved-params-grid">
+                        <div class="integer-input compact">
+                            <label for="int-10">10:</label>
+                            <input type="number" id="int-10" value="0" min="0" max="65535">
+                        </div>
+                        <div class="integer-input compact">
+                            <label for="int-11">11:</label>
+                            <input type="number" id="int-11" value="0" min="0" max="65535">
+                        </div>
+                        <div class="integer-input compact">
+                            <label for="int-12">12:</label>
+                            <input type="number" id="int-12" value="0" min="0" max="65535">
+                        </div>
+                        <div class="integer-input compact">
+                            <label for="int-13">13:</label>
+                            <input type="number" id="int-13" value="0" min="0" max="65535">
+                        </div>
+                        <div class="integer-input compact">
+                            <label for="int-14">14:</label>
+                            <input type="number" id="int-14" value="0" min="0" max="65535">
+                        </div>
+                        <div class="integer-input compact">
+                            <label for="int-15">15:</label>
+                            <input type="number" id="int-15" value="0" min="0" max="65535">
+                        </div>
                     </div>
                 </div>
             </div>

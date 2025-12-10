@@ -239,19 +239,16 @@ if (disconnectBtn) {
     });
 }
 
-// Auto-send toggle - only functional in main window
+// Auto-send toggle - only functional in settings window, broadcasts state to main window
 if (autoSendToggle) {
-    autoSendToggle.addEventListener('change', () => {
-        saveSettings(); // Save the toggle state
+    autoSendToggle.addEventListener('change', async () => {
+        const enabled = autoSendToggle.checked;
+        const latencyMs = sendLatencyInput ? parseInt(sendLatencyInput.value) : stateManager.get('sendLatencyMs');
 
-        // Only control auto-send in main window
-        if (isMainWindow()) {
-            if (autoSendToggle.checked && stateManager.get('isConnected')) {
-                startAutoSend();
-            } else {
-                stopAutoSend();
-            }
-        }
+        // Broadcast auto-send state to all windows via IPC
+        await window.electronAPI.setAutoSend({ enabled, latencyMs });
+
+        saveSettings(); // Save the toggle state locally
     });
 }
 
@@ -274,7 +271,7 @@ if (debugModeToggle) {
 
 // Send latency input handler
 if (sendLatencyInput) {
-    sendLatencyInput.addEventListener('change', () => {
+    sendLatencyInput.addEventListener('change', async () => {
         const newLatency = parseInt(sendLatencyInput.value);
 
         // Validate latency value
@@ -288,6 +285,10 @@ if (sendLatencyInput) {
         dataSender.updateAutoSendInterval(newLatency);
         settingsManager.setSendLatencyMs(newLatency);
         saveSettings(); // Save the latency setting
+
+        // Broadcast auto-send state with new latency to all windows
+        const enabled = autoSendToggle ? autoSendToggle.checked : false;
+        await window.electronAPI.setAutoSend({ enabled, latencyMs: newLatency });
     });
 
     // Also handle on blur to update when user clicks away
@@ -445,6 +446,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // Apply auto-send state
+        if (appState.autoSend) {
+            const { enabled, latencyMs } = appState.autoSend;
+
+            // Update latency in state manager
+            if (latencyMs) {
+                stateManager.set('sendLatencyMs', latencyMs);
+            }
+
+            // Update UI elements if they exist (settings window)
+            if (autoSendToggle) {
+                autoSendToggle.checked = enabled;
+            }
+            if (sendLatencyInput && latencyMs) {
+                sendLatencyInput.value = latencyMs;
+            }
+            if (autoSendIndicator) {
+                autoSendIndicator.textContent = enabled ? window.t('on') : window.t('off');
+                autoSendIndicator.className = enabled ? 'auto-send-indicator active' : 'auto-send-indicator';
+            }
+
+            // Main window: start auto-send if enabled and connected
+            if (isMainWindow() && enabled && appState.connection && appState.connection.connected) {
+                startAutoSend();
+            }
+        }
+
         // Apply theme state (theme-manager.js will handle this)
         // Apply language state (language-manager.js will handle this)
 
@@ -509,6 +537,41 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (logContainer) {
                     addLog(`Protocol changed to ${value.toUpperCase()} by another window`, 'info');
                 }
+            }
+        });
+    }
+
+    // Listen for auto-send changes from other windows (via unified state)
+    // Main window handles actual auto-send, settings window only shows UI
+    if (window.electronAPI && window.electronAPI.onAutoSendChanged) {
+        window.electronAPI.onAutoSendChanged((autoSendState) => {
+            const { enabled, latencyMs } = autoSendState;
+
+            // Update latency in state and data sender
+            if (latencyMs && latencyMs !== stateManager.get('sendLatencyMs')) {
+                stateManager.set('sendLatencyMs', latencyMs);
+                dataSender.updateAutoSendInterval(latencyMs);
+            }
+
+            // Main window: control actual auto-send
+            if (isMainWindow()) {
+                if (enabled && stateManager.get('isConnected') && !dataSender.isAutoSendActive()) {
+                    startAutoSend();
+                } else if (!enabled && dataSender.isAutoSendActive()) {
+                    stopAutoSend();
+                }
+            }
+
+            // Settings window: update UI to reflect state
+            if (autoSendToggle) {
+                autoSendToggle.checked = enabled;
+            }
+            if (sendLatencyInput && latencyMs) {
+                sendLatencyInput.value = latencyMs;
+            }
+            if (autoSendIndicator) {
+                autoSendIndicator.textContent = enabled ? window.t('on') : window.t('off');
+                autoSendIndicator.className = enabled ? 'auto-send-indicator active' : 'auto-send-indicator';
             }
         });
     }

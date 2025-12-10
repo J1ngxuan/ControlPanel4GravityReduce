@@ -43,6 +43,10 @@ const appState = {
     tcpData: {
         bools: [],
         ints: []
+    },
+    autoSend: {
+        enabled: false,
+        latencyMs: 20
     }
 };
 
@@ -159,6 +163,24 @@ app.whenReady().then(() => {
                 }
             })
             .catch(err => console.error('Failed to load protocol:', err));
+
+        // Load auto-send settings
+        mainWindow.webContents.executeJavaScript('localStorage.getItem("autoSend")')
+            .then(savedAutoSend => {
+                if (savedAutoSend === 'true') {
+                    appState.autoSend.enabled = true;
+                }
+            })
+            .catch(err => console.error('Failed to load autoSend:', err));
+
+        mainWindow.webContents.executeJavaScript('localStorage.getItem("send-latency-ms")')
+            .then(savedLatency => {
+                const latency = parseInt(savedLatency);
+                if (latency && latency >= 1 && latency <= 10000) {
+                    appState.autoSend.latencyMs = latency;
+                }
+            })
+            .catch(err => console.error('Failed to load send-latency-ms:', err));
     });
 
     app.on('activate', function () {
@@ -546,6 +568,12 @@ ipcMain.handle('set-protocol', async (event, protocol) => {
     broadcastStateChange('protocol', protocol);
 
     return { success: true, message: `Protocol switched to ${protocol.toUpperCase()}` };
+});
+
+// Update auto-send state
+ipcMain.handle('set-auto-send', async (event, autoSendState) => {
+    broadcastStateChange('autoSend', autoSendState);
+    return { success: true };
 });
 
 // Open settings window handler

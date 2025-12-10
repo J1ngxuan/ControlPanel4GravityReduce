@@ -58,17 +58,6 @@
         <div class="status-bar">
             <span class="status-label" data-i18n="connection">Connection:</span>
             <span id="status-indicator" class="status-disconnected" data-i18n="disconnected">Disconnected</span>
-            <div class="auto-send-controls">
-                <label>
-                    <input type="checkbox" id="auto-send-toggle">
-                    <span class="status-label" data-i18n="autoSend">Auto-Send</span>
-                </label>
-                <div class="latency-input-group">
-                    <input type="number" id="send-latency" class="latency-input" value="20" min="1" max="10000" placeholder="20">
-                    <span class="unit-label">ms</span>
-                </div>
-                <span id="auto-send-indicator" class="auto-send-indicator" data-i18n="off">OFF</span>
-            </div>
             <div class="debug-controls">
                 <label>
                     <input type="checkbox" id="debug-mode-toggle">
@@ -111,11 +100,34 @@
                     <!-- Position Control -->
                     <div class="command-group">
                         <h3 data-i18n="positionControl">Position Control</h3>
-                        <div class="commands-grid-group">
-                            <button class="btn btn-command" data-cmd="13" data-name="X Position Move" data-i18n="xPositionMove" disabled>X Position Move</button>
-                            <button class="btn btn-command" data-cmd="15" data-name="Y Position Move" data-i18n="yPositionMove" disabled>Y Position Move</button>
-                            <button class="btn btn-command" data-cmd="17" data-name="Z Position Move" data-i18n="zPositionMove" disabled>Z Position Move</button>
-                            <button class="btn btn-command" data-cmd="20" data-name="XY Position Move" data-i18n="xyPositionMove" disabled>XY Position Move</button>
+                        <div class="position-controls-grid">
+                            <div class="position-control-row">
+                                <button class="btn btn-command" data-cmd="13" data-name="X Position Move" data-i18n="xPositionMove" disabled>X Position Move</button>
+                                <div class="position-input-group">
+                                    <label for="int-2" data-i18n="targetX">Target X:</label>
+                                    <input type="number" id="int-2" value="0" min="0" max="65535">
+                                    <span class="unit-hint" data-i18n="unitMm">mm</span>
+                                </div>
+                            </div>
+                            <div class="position-control-row">
+                                <button class="btn btn-command" data-cmd="15" data-name="Y Position Move" data-i18n="yPositionMove" disabled>Y Position Move</button>
+                                <div class="position-input-group">
+                                    <label for="int-3" data-i18n="targetY">Target Y:</label>
+                                    <input type="number" id="int-3" value="0" min="0" max="65535">
+                                    <span class="unit-hint" data-i18n="unitMm">mm</span>
+                                </div>
+                            </div>
+                            <div class="position-control-row">
+                                <button class="btn btn-command" data-cmd="17" data-name="Z Position Move" data-i18n="zPositionMove" disabled>Z Position Move</button>
+                                <div class="position-input-group">
+                                    <label for="int-4" data-i18n="targetZ">Target Z:</label>
+                                    <input type="number" id="int-4" value="0" min="0" max="65535">
+                                    <span class="unit-hint" data-i18n="unitMm">mm</span>
+                                </div>
+                            </div>
+                            <div class="position-control-row">
+                                <button class="btn btn-command" data-cmd="20" data-name="XY Position Move" data-i18n="xyPositionMove" disabled>XY Position Move</button>
+                            </div>
                         </div>
                     </div>
 

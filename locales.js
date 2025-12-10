@@ -377,7 +377,7 @@ const LOCALES = {
         communicationControl: '通信与控制',
         commFlag: '通信标志:',
         commFlagTooltip: '0:无连接, 1234:已连接',
-        controlCommand: '控制命令:',
+        controlCommand: '控制指令:',
 
         // Unit hints
         unitRange04: '0-4',
