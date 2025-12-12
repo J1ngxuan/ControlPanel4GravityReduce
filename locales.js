@@ -74,24 +74,24 @@ const LOCALES = {
 
         // Boolean status labels
         boolLabels: [
-            'X Pos Complete', 'Y Pos Complete', 'Z Pos Complete',
-            'X Calibrated', 'Y Calibrated', 'Z Status',
-            'X Servo Active', 'Y Servo Active', 'Z Servo Active',
-            'X+ Hard Limit', 'X- Hard Limit', 'Y+ Hard Limit', 'Y- Hard Limit',
-            'X+ Soft Limit', 'X- Soft Limit', 'Y Soft Status', 'Z Soft Status',
-            'Force Exp Active', 'Precision Align', 'Abs Pos Move', 'Emergency Stop',
-            'Status 21', 'Status 22', 'Status 23', 'Status 24',
-            'Status 25', 'Status 26', 'Status 27', 'Status 28',
-            'Status 29', 'Status 30', 'Status 31', 'Status 32',
-            'Status 33', 'Status 34', 'Status 35', 'Status 36',
-            'Status 37', 'Status 38', 'Status 39', 'Status 40'
+            '2D Exp Active', 'Force Exp Active', 'Translate X+',
+            'Translate X-', 'Translate Y+', 'Translate Y-',
+            'Translate Z+', 'Translate Z-', 'X Pos Move Start',
+            'Y Pos Move Start', 'Z Pos Move Start', 'X Pos Complete', 'Y Pos Complete',
+            'Z Pos Complete', 'X Calibrated', 'Y Calibrated', '2D Power X',
+            '2D Power Y', 'Force Power Z', '2D Servo X', '2D Servo Y',
+            'Force Servo Z', '2D Hard Limit X+', '2D Hard Limit X-', '2D Hard Limit Y+',
+            '2D Hard Limit Y-', 'Precision Align', 'Tension Set', '2D Abs Pos Move',
+            'Force Abs Pos Move', '2D Abs Move Done', 'Force Abs Move Done', 'E-Stop Feedback',
+            '2D Soft Limit X+', '2D Soft Limit X-', '2D Soft Limit Y+', '2D Soft Limit Y-',
+            'Force Soft Limit Z+', 'Force Soft Limit Z-', 'Sensor Fault'
         ],
 
         // Integer status labels
         intLabels: [
-            'Current X Pos', 'Current Y Pos', 'Current Z Pos',
-            'Current Speed', 'Force Value', 'Tension Value',
-            'Status Int 6', 'Status Int 7', 'Status Int 8', 'Status Int 9'
+            '2D Position X', '2D Position Y', 'Force Position Z',
+            'Rope Angle X', 'Rope Angle Y', '2D Velocity X',
+            '2D Velocity Y', 'Force Velocity Z', 'Tension Reading', 'Command Echo'
         ],
 
         // Settings window
@@ -308,9 +308,9 @@ const LOCALES = {
 
         // Integer status labels
         intLabels: [
-            '当前X位置', '当前Y位置', '当前Z位置',
-            '当前速度', '力值', '张力值',
-            '状态整数6', '状态整数7', '状态整数8', '状态整数9'
+            '二维位置X', '二维位置Y', '恒力位置Z',
+            '绳索偏角X', '绳索偏角Y', '二维速度X',
+            '二维速度Y', '恒力速度Z', '拉力读数', '指令回传'
         ],
 
         // Settings window
