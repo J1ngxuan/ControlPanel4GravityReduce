@@ -42,6 +42,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
     setLanguage: (language) => ipcRenderer.invoke('set-language', language),
     setAutoSend: (autoSendState) => ipcRenderer.invoke('set-auto-send', autoSendState),
+    setDebugMode: (enabled) => ipcRenderer.invoke('set-debug-mode', enabled),
 
     // Single unified state change listener
     onStateChanged: (callback) => {
@@ -80,6 +81,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onAutoSendChanged: (callback) => {
         ipcRenderer.on('app-state-changed', (event, { key, value }) => {
             if (key === 'autoSend') callback(value);
+        });
+    },
+    onDebugModeChanged: (callback) => {
+        ipcRenderer.on('app-state-changed', (event, { key, value }) => {
+            if (key === 'debugMode') callback(value);
         });
     }
 });

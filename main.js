@@ -47,7 +47,8 @@ const appState = {
     autoSend: {
         enabled: false,
         latencyMs: 20
-    }
+    },
+    debugMode: false
 };
 
 // Broadcast state changes to all windows
@@ -181,6 +182,15 @@ app.whenReady().then(() => {
                 }
             })
             .catch(err => console.error('Failed to load send-latency-ms:', err));
+
+        // Load debug mode setting
+        mainWindow.webContents.executeJavaScript('localStorage.getItem("debugMode")')
+            .then(savedDebugMode => {
+                if (savedDebugMode === 'true') {
+                    appState.debugMode = true;
+                }
+            })
+            .catch(err => console.error('Failed to load debugMode:', err));
     });
 
     app.on('activate', function () {
@@ -573,6 +583,12 @@ ipcMain.handle('set-protocol', async (event, protocol) => {
 // Update auto-send state
 ipcMain.handle('set-auto-send', async (event, autoSendState) => {
     broadcastStateChange('autoSend', autoSendState);
+    return { success: true };
+});
+
+// Update debug mode state
+ipcMain.handle('set-debug-mode', async (event, enabled) => {
+    broadcastStateChange('debugMode', enabled);
     return { success: true };
 });
 

@@ -57,6 +57,7 @@ const boolDisplay = document.getElementById('bool-display');
 const intDisplay = document.getElementById('int-display');
 const logContainer = document.getElementById('log');
 const debugModeToggle = document.getElementById('debug-mode-toggle');
+const debugModeIndicator = document.getElementById('debug-mode-indicator');
 const debugRxValue = document.getElementById('debug-rx-value');
 const debugTxValue = document.getElementById('debug-tx-value');
 const sendLatencyInput = document.getElementById('send-latency');
@@ -252,19 +253,22 @@ if (autoSendToggle) {
     });
 }
 
-// Debug mode toggle
+// Debug mode toggle - only in settings window, broadcasts to main window
 if (debugModeToggle) {
-    debugModeToggle.addEventListener('change', () => {
-        stateManager.set('debugModeEnabled', debugModeToggle.checked);
+    debugModeToggle.addEventListener('change', async () => {
+        const enabled = debugModeToggle.checked;
+
+        // Update local state
+        stateManager.set('debugModeEnabled', enabled);
         saveSettings(); // Save the toggle state
 
-        if (debugModeToggle.checked) {
+        // Broadcast debug mode state to all windows via IPC
+        await window.electronAPI.setDebugMode(enabled);
+
+        if (enabled) {
             addLog('Debug echo mode enabled: RX[9] → TX[6]', 'info');
         } else {
             addLog('Debug echo mode disabled', 'info');
-            // Clear debug display values
-            if (debugRxValue) debugRxValue.textContent = '--';
-            if (debugTxValue) debugTxValue.textContent = '--';
         }
     });
 }
@@ -473,6 +477,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // Apply debug mode state
+        if (appState.debugMode !== undefined) {
+            const enabled = appState.debugMode;
+
+            // Update local state
+            stateManager.set('debugModeEnabled', enabled);
+
+            // Update UI elements
+            if (debugModeToggle) {
+                debugModeToggle.checked = enabled;
+            }
+            if (debugModeIndicator) {
+                debugModeIndicator.textContent = enabled ? window.t('on') : window.t('off');
+                debugModeIndicator.className = enabled ? 'auto-send-indicator active' : 'auto-send-indicator';
+            }
+        }
+
         // Apply theme state (theme-manager.js will handle this)
         // Apply language state (language-manager.js will handle this)
 
@@ -572,6 +593,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (autoSendIndicator) {
                 autoSendIndicator.textContent = enabled ? window.t('on') : window.t('off');
                 autoSendIndicator.className = enabled ? 'auto-send-indicator active' : 'auto-send-indicator';
+            }
+        });
+    }
+
+    // Listen for debug mode changes from other windows (via unified state)
+    // Main window shows indicator only, settings window has the control
+    if (window.electronAPI && window.electronAPI.onDebugModeChanged) {
+        window.electronAPI.onDebugModeChanged((enabled) => {
+            // Update local state
+            stateManager.set('debugModeEnabled', enabled);
+
+            // Update UI elements in both windows
+            if (debugModeToggle) {
+                debugModeToggle.checked = enabled;
+            }
+            if (debugModeIndicator) {
+                debugModeIndicator.textContent = enabled ? window.t('on') : window.t('off');
+                debugModeIndicator.className = enabled ? 'auto-send-indicator active' : 'auto-send-indicator';
+            }
+
+            // Clear debug display values when disabled (main window only)
+            if (!enabled) {
+                if (debugRxValue) debugRxValue.textContent = '--';
+                if (debugTxValue) debugTxValue.textContent = '--';
             }
         });
     }

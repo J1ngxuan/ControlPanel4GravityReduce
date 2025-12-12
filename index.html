@@ -58,11 +58,13 @@
         <div class="status-bar">
             <span class="status-label" data-i18n="connection">Connection:</span>
             <span id="status-indicator" class="status-disconnected" data-i18n="disconnected">Disconnected</span>
+            <div class="auto-send-display">
+                <span class="status-label" data-i18n="autoSend">Auto-Send</span>
+                <span id="auto-send-indicator" class="auto-send-indicator" data-i18n="off">OFF</span>
+            </div>
             <div class="debug-controls">
-                <label>
-                    <input type="checkbox" id="debug-mode-toggle">
-                    <span class="status-label" data-i18n="debugEcho">Debug Echo</span>
-                </label>
+                <span class="status-label" data-i18n="debugEcho">Debug Echo</span>
+                <span id="debug-mode-indicator" class="auto-send-indicator" data-i18n="off">OFF</span>
                 <span class="debug-info">RX[9]:<span id="debug-rx-value">--</span> TX[6]:<span id="debug-tx-value">--</span></span>
             </div>
         </div>
