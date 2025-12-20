@@ -65,6 +65,25 @@ const LOCALES = {
         stopZAxis: 'Stop Z-Axis',
         stopXYZ: 'STOP XYZ',
         emergencyStop: 'Emergency Stop + Clear Pulse',
+        globalEmergency: 'Global Emergency',
+
+        // XYZ Motion Control Panel
+        xyzMotionControl: 'XYZ Motion Control',
+        xyzPower: 'Power',
+        xyzServo: 'Servo',
+        xyzCalibrated: 'Calibrated',
+        xyzSoftLimits: 'Soft Limits',
+        xyzHardLimits: 'Hard Limits',
+        xyzCurrentPosition: 'Position',
+        xyzVelocity: 'Velocity',
+        xyzTarget: 'Target',
+        xyzStatus: 'Status',
+        xyzManualControl: 'Manual Control',
+        xyzTranslate: 'Translate',
+        xyzMove: 'Move',
+        xyzStop: 'Stop',
+        xyzMoving: 'Moving',
+        xyzComplete: 'Complete',
 
         // Monitor tab
         statusMonitoring: 'Status Monitoring',
@@ -284,6 +303,25 @@ const LOCALES = {
         stopZAxis: '停止Z轴',
         stopXYZ: '停止XYZ',
         emergencyStop: '紧急停止 + 清除脉冲',
+        globalEmergency: '全局紧急停止',
+
+        // XYZ Motion Control Panel
+        xyzMotionControl: 'XYZ运动控制',
+        xyzPower: '电源',
+        xyzServo: '伺服',
+        xyzCalibrated: '已标定',
+        xyzSoftLimits: '软限位',
+        xyzHardLimits: '硬限位',
+        xyzCurrentPosition: '位置',
+        xyzVelocity: '速度',
+        xyzTarget: '目标',
+        xyzStatus: '状态',
+        xyzManualControl: '手动控制',
+        xyzTranslate: '平移状态',
+        xyzMove: '移动',
+        xyzStop: '停止',
+        xyzMoving: '移动中',
+        xyzComplete: '完成',
 
         // Monitor tab
         statusMonitoring: '状态监控',

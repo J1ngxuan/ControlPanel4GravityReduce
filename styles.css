@@ -2249,3 +2249,403 @@ h3 {
     padding-bottom: 12px;
 }
 
+/* ========== XYZ Motion Control Panel Styles ========== */
+
+.xyz-motion-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* System Status Section - Power/Servo/Calibrated */
+.xyz-status-section {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-primary);
+}
+
+.xyz-status-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.xyz-status-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.xyz-status-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.xyz-status-indicators {
+    display: flex;
+    gap: 4px;
+}
+
+.xyz-indicator {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 5px;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-primary);
+    transition: all 0.3s ease;
+}
+
+.xyz-indicator.active {
+    background: var(--success-bg);
+    color: var(--success-text);
+    border-color: var(--success-border);
+    box-shadow: 0 0 6px rgba(22, 130, 93, 0.3);
+}
+
+/* Movement Status Section - Translate + Limits (unified row) */
+.xyz-movement-status-section {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-primary);
+}
+
+.xyz-movement-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.xyz-movement-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.xyz-movement-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.xyz-movement-indicators {
+    display: flex;
+    gap: 3px;
+}
+
+/* Unified directional indicator style */
+.xyz-dir-indicator {
+    padding: 3px 5px;
+    font-size: 9px;
+    font-weight: 600;
+    border-radius: 3px;
+    background: var(--bg-input);
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-primary);
+    transition: all 0.2s ease;
+    min-width: 22px;
+    text-align: center;
+}
+
+/* Translate active state - green */
+.xyz-dir-indicator.active {
+    background: var(--success-bg);
+    color: var(--success-text);
+    border-color: var(--success-border);
+    box-shadow: 0 0 4px rgba(22, 130, 93, 0.4);
+}
+
+/* Soft limit active state - yellow/warning */
+.xyz-dir-indicator.xyz-limit-soft.active {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+    border-color: var(--warning-border);
+}
+
+/* Hard limit active state - red/error with flash */
+.xyz-dir-indicator.xyz-limit-hard.active {
+    background: var(--error-bg);
+    color: var(--error-text);
+    border-color: var(--error-border);
+    animation: limit-flash 0.5s infinite;
+}
+
+@keyframes limit-flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Position Section - Current + Target + Controls in table layout */
+.xyz-position-section {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-primary);
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.xyz-position-header {
+    display: grid;
+    grid-template-columns: 30px 75px 70px 75px 50px 45px 50px;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 4px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.xyz-header-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+}
+
+.xyz-position-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.xyz-axis-row {
+    display: grid;
+    grid-template-columns: 30px 75px 70px 75px 50px 45px 50px;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 4px;
+    background: var(--bg-primary);
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.xyz-axis-row:hover {
+    background: var(--bg-hover);
+}
+
+.xyz-axis-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-primary);
+    text-align: center;
+}
+
+.xyz-current-group,
+.xyz-velocity-group {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    background: var(--bg-tertiary);
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+.xyz-current-value {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    color: var(--info-text);
+}
+
+.xyz-current-unit {
+    font-size: 9px;
+    color: var(--text-tertiary);
+}
+
+.xyz-velocity-value {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Courier New', monospace;
+    color: var(--text-primary);
+}
+
+.xyz-velocity-unit {
+    font-size: 8px;
+    color: var(--text-tertiary);
+}
+
+.xyz-target-group {
+    display: flex;
+}
+
+.xyz-target-input {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid var(--border-primary);
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.xyz-target-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.15);
+}
+
+.btn-xyz-move,
+.btn-xyz-stop {
+    padding: 4px 8px !important;
+    font-size: 10px !important;
+    min-height: 26px !important;
+    border-radius: 4px !important;
+}
+
+.btn-xyz-stop {
+    background: var(--warning-button) !important;
+}
+
+.btn-xyz-stop:hover:not(:disabled) {
+    background: var(--warning-button-hover) !important;
+}
+
+.xyz-axis-status {
+    display: flex;
+    justify-content: center;
+}
+
+/* Single animated status indicator for position moves */
+.xyz-status-indicator {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    color: var(--text-tertiary);
+    border: 2px solid var(--border-primary);
+    transition: all 0.3s ease;
+}
+
+/* Moving state - yellow pulsing */
+.xyz-status-indicator.moving {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+    border-color: var(--warning-border);
+    animation: status-pulse 1s ease-in-out infinite;
+}
+
+/* Complete state - green with brief glow */
+.xyz-status-indicator.complete {
+    background: var(--success-bg);
+    color: var(--success-text);
+    border-color: var(--success-border);
+    animation: status-complete 0.6s ease-out;
+}
+
+@keyframes status-pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(235, 180, 52, 0.4);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 12px 4px rgba(235, 180, 52, 0.3);
+    }
+}
+
+@keyframes status-complete {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(22, 130, 93, 0.6);
+    }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 16px 6px rgba(22, 130, 93, 0.4);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 4px 2px rgba(22, 130, 93, 0.2);
+    }
+}
+
+/* XY Combined Button Row - positioned between X and Y */
+.xyz-xy-combined-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 2px 4px;
+    margin: -2px 0;
+    position: relative;
+}
+
+.xyz-xy-combined-row::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent-primary), var(--accent-primary));
+    border-radius: 1px;
+}
+
+.btn-xyz-move-xy {
+    padding: 4px 12px !important;
+    font-size: 10px !important;
+    min-height: 24px !important;
+    border-radius: 4px !important;
+    margin-right: 54px;
+}
+
+/* Manual Control Section */
+.xyz-manual-section {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid var(--border-primary);
+}
+
+.xyz-manual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.xyz-manual-header span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-stop-all {
+    padding: 6px 14px !important;
+    font-size: 11px !important;
+}
+
+.xyz-manual-controls {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+

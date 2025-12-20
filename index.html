@@ -99,40 +99,6 @@
                         </div>
                     </div>
 
-                    <!-- Position Control -->
-                    <div class="command-group">
-                        <h3 data-i18n="positionControl">Position Control</h3>
-                        <div class="position-controls-grid">
-                            <div class="position-control-row">
-                                <button class="btn btn-command" data-cmd="13" data-name="X Position Move" data-i18n="xPositionMove" disabled>X Position Move</button>
-                                <div class="position-input-group">
-                                    <label for="int-2" data-i18n="targetX">Target X:</label>
-                                    <input type="number" id="int-2" value="0" min="0" max="65535">
-                                    <span class="unit-hint" data-i18n="unitMm">mm</span>
-                                </div>
-                            </div>
-                            <div class="position-control-row">
-                                <button class="btn btn-command" data-cmd="15" data-name="Y Position Move" data-i18n="yPositionMove" disabled>Y Position Move</button>
-                                <div class="position-input-group">
-                                    <label for="int-3" data-i18n="targetY">Target Y:</label>
-                                    <input type="number" id="int-3" value="0" min="0" max="65535">
-                                    <span class="unit-hint" data-i18n="unitMm">mm</span>
-                                </div>
-                            </div>
-                            <div class="position-control-row">
-                                <button class="btn btn-command" data-cmd="17" data-name="Z Position Move" data-i18n="zPositionMove" disabled>Z Position Move</button>
-                                <div class="position-input-group">
-                                    <label for="int-4" data-i18n="targetZ">Target Z:</label>
-                                    <input type="number" id="int-4" value="0" min="0" max="65535">
-                                    <span class="unit-hint" data-i18n="unitMm">mm</span>
-                                </div>
-                            </div>
-                            <div class="position-control-row">
-                                <button class="btn btn-command" data-cmd="20" data-name="XY Position Move" data-i18n="xyPositionMove" disabled>XY Position Move</button>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Function Control -->
                     <div class="command-group">
                         <h3 data-i18n="functionControl">Function Control</h3>
@@ -143,21 +109,6 @@
                         </div>
                     </div>
 
-                    <!-- Emergency Stops -->
-                    <div class="command-group">
-                        <h3 data-i18n="emergencyStops">Emergency Stops</h3>
-                        <div class="commands-grid-group">
-                            <button class="btn btn-command" data-cmd="14" data-name="Stop X-Axis" data-i18n="stopXAxis" disabled>Stop X-Axis</button>
-                            <button class="btn btn-command" data-cmd="16" data-name="Stop Y-Axis" data-i18n="stopYAxis" disabled>Stop Y-Axis</button>
-                            <button class="btn btn-command" data-cmd="18" data-name="Stop Z-Axis" data-i18n="stopZAxis" disabled>Stop Z-Axis</button>
-                            <button class="btn btn-command btn-emergency" data-cmd="19" data-name="STOP XYZ" data-i18n="stopXYZ" disabled>STOP XYZ</button>
-                            <button class="btn btn-command btn-emergency" data-cmd="23" data-name="Emergency Stop" data-i18n="emergencyStop" disabled>Emergency Stop + Clear Pulse</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column -->
-                <div class="commands-column">
                     <!-- Power Control -->
                     <div class="command-group">
                         <h3 data-i18n="powerServoControl">Power & Servo Control</h3>
@@ -187,37 +138,205 @@
                         </div>
                     </div>
 
-                    <!-- Axis Movement -->
+                    <!-- Global Emergency Stop -->
                     <div class="command-group">
-                        <h3 data-i18n="axisMovement">Axis Movement</h3>
-                        <div class="axis-controls-container">
-                            <!-- XY Joystick Control -->
-                            <div class="joystick-container">
-                                <h4 data-i18n="xyAxisControl">X/Y Axis Control</h4>
-                                <div class="joystick-wrapper">
-                                    <canvas id="joystick-canvas" width="160" height="160"></canvas>
-                                    <div class="joystick-labels">
-                                        <span class="label-top">Y+</span>
-                                        <span class="label-right">X+</span>
-                                        <span class="label-bottom">Y-</span>
-                                        <span class="label-left">X-</span>
+                        <h3 data-i18n="globalEmergency">Global Emergency</h3>
+                        <div class="commands-grid-group">
+                            <button class="btn btn-command btn-emergency" data-cmd="23" data-name="Emergency Stop" data-i18n="emergencyStop" disabled>Emergency Stop + Clear Pulse</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: XYZ Motion Control -->
+                <div class="commands-column">
+                    <!-- XYZ Motion Control Panel -->
+                    <div class="command-group xyz-motion-panel">
+                        <h3 data-i18n="xyzMotionControl">XYZ Motion Control</h3>
+
+                        <!-- System Status Section -->
+                        <div class="xyz-status-section">
+                            <div class="xyz-status-row">
+                                <div class="xyz-status-group">
+                                    <span class="xyz-status-label" data-i18n="xyzPower">Power</span>
+                                    <div class="xyz-status-indicators">
+                                        <span class="xyz-indicator" id="xyz-power-x" data-axis="X">X</span>
+                                        <span class="xyz-indicator" id="xyz-power-y" data-axis="Y">Y</span>
+                                        <span class="xyz-indicator" id="xyz-power-z" data-axis="Z">Z</span>
                                     </div>
                                 </div>
-                                <div class="joystick-status">
-                                    <span id="joystick-status" data-i18n="inactive">Inactive</span>
+                                <div class="xyz-status-group">
+                                    <span class="xyz-status-label" data-i18n="xyzServo">Servo</span>
+                                    <div class="xyz-status-indicators">
+                                        <span class="xyz-indicator" id="xyz-servo-x" data-axis="X">X</span>
+                                        <span class="xyz-indicator" id="xyz-servo-y" data-axis="Y">Y</span>
+                                        <span class="xyz-indicator" id="xyz-servo-z" data-axis="Z">Z</span>
+                                    </div>
+                                </div>
+                                <div class="xyz-status-group">
+                                    <span class="xyz-status-label" data-i18n="xyzCalibrated">Calibrated</span>
+                                    <div class="xyz-status-indicators">
+                                        <span class="xyz-indicator" id="xyz-cal-x" data-axis="X">X</span>
+                                        <span class="xyz-indicator" id="xyz-cal-y" data-axis="Y">Y</span>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Z Axis Slider Control -->
-                            <div class="slider-container">
-                                <h4 data-i18n="zAxisControl">Z Axis Control</h4>
-                                <div class="slider-wrapper">
-                                    <div class="slider-label-top">Z+</div>
-                                    <input type="range" id="z-slider" class="z-slider" min="-1" max="1" value="0" step="1" orient="vertical" disabled>
-                                    <div class="slider-label-bottom">Z-</div>
+                        <!-- Movement Status: Translate + Limits -->
+                        <div class="xyz-movement-status-section">
+                            <div class="xyz-movement-row">
+                                <!-- Translate Status -->
+                                <div class="xyz-movement-group">
+                                    <span class="xyz-movement-label" data-i18n="xyzTranslate">Translate</span>
+                                    <div class="xyz-movement-indicators">
+                                        <span class="xyz-dir-indicator" id="xyz-trans-xp">X+</span>
+                                        <span class="xyz-dir-indicator" id="xyz-trans-xm">X-</span>
+                                        <span class="xyz-dir-indicator" id="xyz-trans-yp">Y+</span>
+                                        <span class="xyz-dir-indicator" id="xyz-trans-ym">Y-</span>
+                                        <span class="xyz-dir-indicator" id="xyz-trans-zp">Z+</span>
+                                        <span class="xyz-dir-indicator" id="xyz-trans-zm">Z-</span>
+                                    </div>
                                 </div>
-                                <div class="slider-status">
-                                    <span id="slider-status" data-i18n="inactive">Inactive</span>
+                                <!-- Soft Limits -->
+                                <div class="xyz-movement-group">
+                                    <span class="xyz-movement-label" data-i18n="xyzSoftLimits">Soft Limits</span>
+                                    <div class="xyz-movement-indicators">
+                                        <span class="xyz-dir-indicator xyz-limit-soft" id="xyz-soft-xp">X+</span>
+                                        <span class="xyz-dir-indicator xyz-limit-soft" id="xyz-soft-xm">X-</span>
+                                        <span class="xyz-dir-indicator xyz-limit-soft" id="xyz-soft-yp">Y+</span>
+                                        <span class="xyz-dir-indicator xyz-limit-soft" id="xyz-soft-ym">Y-</span>
+                                        <span class="xyz-dir-indicator xyz-limit-soft" id="xyz-soft-zp">Z+</span>
+                                        <span class="xyz-dir-indicator xyz-limit-soft" id="xyz-soft-zm">Z-</span>
+                                    </div>
+                                </div>
+                                <!-- Hard Limits -->
+                                <div class="xyz-movement-group">
+                                    <span class="xyz-movement-label" data-i18n="xyzHardLimits">Hard Limits</span>
+                                    <div class="xyz-movement-indicators">
+                                        <span class="xyz-dir-indicator xyz-limit-hard" id="xyz-hard-xp">X+</span>
+                                        <span class="xyz-dir-indicator xyz-limit-hard" id="xyz-hard-xm">X-</span>
+                                        <span class="xyz-dir-indicator xyz-limit-hard" id="xyz-hard-yp">Y+</span>
+                                        <span class="xyz-dir-indicator xyz-limit-hard" id="xyz-hard-ym">Y-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Position Section: Current + Target -->
+                        <div class="xyz-position-section">
+                            <div class="xyz-position-grid">
+                                <!-- X Axis Row -->
+                                <div class="xyz-axis-row">
+                                    <span class="xyz-axis-name">X</span>
+                                    <div class="xyz-current-group">
+                                        <span class="xyz-current-value" id="xyz-pos-x">0</span>
+                                        <span class="xyz-current-unit">mm</span>
+                                    </div>
+                                    <div class="xyz-velocity-group">
+                                        <span class="xyz-velocity-value" id="xyz-vel-x">0</span>
+                                        <span class="xyz-velocity-unit">mm/s</span>
+                                    </div>
+                                    <div class="xyz-target-group">
+                                        <input type="number" id="int-2" class="xyz-target-input" value="0" min="0" max="65535" placeholder="Target">
+                                    </div>
+                                    <button class="btn btn-command btn-xyz-move" data-cmd="13" data-name="X Position Move" data-i18n="xyzMove" disabled>Move</button>
+                                    <button class="btn btn-command btn-xyz-stop" data-cmd="14" data-name="Stop X-Axis" data-i18n="xyzStop" disabled>Stop</button>
+                                    <div class="xyz-axis-status">
+                                        <span class="xyz-status-indicator" id="xyz-status-x" title="Status">●</span>
+                                    </div>
+                                </div>
+                                <!-- XY Combined Button (spans between X and Y) -->
+                                <div class="xyz-xy-combined-row">
+                                    <button class="btn btn-command btn-xyz-move-xy" data-cmd="20" data-name="XY Position Move" data-i18n="xyPositionMove" disabled>XY Move</button>
+                                </div>
+                                <!-- Y Axis Row -->
+                                <div class="xyz-axis-row">
+                                    <span class="xyz-axis-name">Y</span>
+                                    <div class="xyz-current-group">
+                                        <span class="xyz-current-value" id="xyz-pos-y">0</span>
+                                        <span class="xyz-current-unit">mm</span>
+                                    </div>
+                                    <div class="xyz-velocity-group">
+                                        <span class="xyz-velocity-value" id="xyz-vel-y">0</span>
+                                        <span class="xyz-velocity-unit">mm/s</span>
+                                    </div>
+                                    <div class="xyz-target-group">
+                                        <input type="number" id="int-3" class="xyz-target-input" value="0" min="0" max="65535" placeholder="Target">
+                                    </div>
+                                    <button class="btn btn-command btn-xyz-move" data-cmd="15" data-name="Y Position Move" data-i18n="xyzMove" disabled>Move</button>
+                                    <button class="btn btn-command btn-xyz-stop" data-cmd="16" data-name="Stop Y-Axis" data-i18n="xyzStop" disabled>Stop</button>
+                                    <div class="xyz-axis-status">
+                                        <span class="xyz-status-indicator" id="xyz-status-y" title="Status">●</span>
+                                    </div>
+                                </div>
+                                <!-- Z Axis Row -->
+                                <div class="xyz-axis-row">
+                                    <span class="xyz-axis-name">Z</span>
+                                    <div class="xyz-current-group">
+                                        <span class="xyz-current-value" id="xyz-pos-z">0</span>
+                                        <span class="xyz-current-unit">mm</span>
+                                    </div>
+                                    <div class="xyz-velocity-group">
+                                        <span class="xyz-velocity-value" id="xyz-vel-z">0</span>
+                                        <span class="xyz-velocity-unit">mm/s</span>
+                                    </div>
+                                    <div class="xyz-target-group">
+                                        <input type="number" id="int-4" class="xyz-target-input" value="0" min="0" max="65535" placeholder="Target">
+                                    </div>
+                                    <button class="btn btn-command btn-xyz-move" data-cmd="17" data-name="Z Position Move" data-i18n="xyzMove" disabled>Move</button>
+                                    <button class="btn btn-command btn-xyz-stop" data-cmd="18" data-name="Stop Z-Axis" data-i18n="xyzStop" disabled>Stop</button>
+                                    <div class="xyz-axis-status">
+                                        <span class="xyz-status-indicator" id="xyz-status-z" title="Status">●</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Position Section Header -->
+                            <div class="xyz-position-header">
+                                <span class="xyz-header-label"></span>
+                                <span class="xyz-header-label" data-i18n="xyzCurrentPosition">Position</span>
+                                <span class="xyz-header-label" data-i18n="xyzVelocity">Velocity</span>
+                                <span class="xyz-header-label" data-i18n="xyzTarget">Target</span>
+                                <span class="xyz-header-label"></span>
+                                <span class="xyz-header-label"></span>
+                                <span class="xyz-header-label"></span>
+                            </div>
+                        </div>
+
+                        <!-- Manual Control Section -->
+                        <div class="xyz-manual-section">
+                            <div class="xyz-manual-header">
+                                <span data-i18n="xyzManualControl">Manual Control</span>
+                                <button class="btn btn-command btn-emergency btn-stop-all" data-cmd="19" data-name="STOP XYZ" data-i18n="stopXYZ" disabled>STOP XYZ</button>
+                            </div>
+                            <div class="xyz-manual-controls">
+                                <!-- XY Joystick Control -->
+                                <div class="joystick-container">
+                                    <h4 data-i18n="xyAxisControl">X/Y Axis Control</h4>
+                                    <div class="joystick-wrapper">
+                                        <canvas id="joystick-canvas" width="160" height="160"></canvas>
+                                        <div class="joystick-labels">
+                                            <span class="label-top">Y+</span>
+                                            <span class="label-right">X+</span>
+                                            <span class="label-bottom">Y-</span>
+                                            <span class="label-left">X-</span>
+                                        </div>
+                                    </div>
+                                    <div class="joystick-status">
+                                        <span id="joystick-status" data-i18n="inactive">Inactive</span>
+                                    </div>
+                                </div>
+
+                                <!-- Z Axis Slider Control -->
+                                <div class="slider-container">
+                                    <h4 data-i18n="zAxisControl">Z Axis Control</h4>
+                                    <div class="slider-wrapper">
+                                        <div class="slider-label-top">Z+</div>
+                                        <input type="range" id="z-slider" class="z-slider" min="-1" max="1" value="0" step="1" orient="vertical" disabled>
+                                        <div class="slider-label-bottom">Z-</div>
+                                    </div>
+                                    <div class="slider-status">
+                                        <span id="slider-status" data-i18n="inactive">Inactive</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

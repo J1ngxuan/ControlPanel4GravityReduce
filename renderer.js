@@ -21,6 +21,7 @@ import sliderControl from './renderer/controls/slider-control.js';
 import settingsManager from './renderer/settings/settings-manager.js';
 import speedModeHandler from './renderer/settings/speed-mode-handler.js';
 import uiInitializers from './renderer/ui/ui-initializers.js';
+import xyzStatusUpdater from './renderer/ui/xyz-status-updater.js';
 
 // Import mocap modules
 import mocapReceiver from './renderer/mocap/mocap-receiver.js';
@@ -423,6 +424,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupInputListeners();
     joystickControl.init();
     sliderControl.init();
+    xyzStatusUpdater.init();
 
     // ========== UNIFIED STATE INITIALIZATION ==========
     // Get entire app state from main process
