@@ -405,7 +405,7 @@ const LOCALES = {
         forceControl: '力控制',
         targetForce: '目标力:',
         tensionControl: '张力控制',
-        targetTension: '目标张力:',
+        targetTension: '期望拉力:',
         customParameters: '自定义参数',
         customParam1: '自定义参数1:',
         customParam2: '自定义参数2:',

@@ -13,6 +13,7 @@ class StateManager {
             currentProtocol: 'tcp', // 'tcp' or 'udp'
 
             // Auto-send state
+            autoSendEnabled: false, // Whether auto-send is enabled
             autoSendInterval: null,
             sendLatencyMs: 20, // Default 20ms interval
 
@@ -205,6 +206,7 @@ class StateManager {
         this.update({
             isConnected: false,
             currentProtocol: 'tcp',
+            autoSendEnabled: false,
             autoSendInterval: null,
             sendLatencyMs: 20,
             currentCommand: 0,

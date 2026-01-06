@@ -154,8 +154,8 @@ function updateConnectionStatus(connected) {
 
         addLog('Successfully connected to server', 'success');
 
-        // Auto-start 50Hz sending ONLY in main window if toggle is checked
-        if (isMainWindow() && autoSendToggle && autoSendToggle.checked && !dataSender.isAutoSendActive()) {
+        // Auto-start 50Hz sending ONLY in main window if auto-send is enabled
+        if (isMainWindow() && stateManager.get('autoSendEnabled') && !dataSender.isAutoSendActive()) {
             startAutoSend();
         }
     } else {
@@ -246,6 +246,9 @@ if (autoSendToggle) {
     autoSendToggle.addEventListener('change', async () => {
         const enabled = autoSendToggle.checked;
         const latencyMs = sendLatencyInput ? parseInt(sendLatencyInput.value) : stateManager.get('sendLatencyMs');
+
+        // Update local state
+        stateManager.set('autoSendEnabled', enabled);
 
         // Broadcast auto-send state to all windows via IPC
         await window.electronAPI.setAutoSend({ enabled, latencyMs });
@@ -456,6 +459,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (appState.autoSend) {
             const { enabled, latencyMs } = appState.autoSend;
 
+            // Update state manager with auto-send enabled state
+            stateManager.set('autoSendEnabled', enabled);
+
             // Update latency in state manager
             if (latencyMs) {
                 stateManager.set('sendLatencyMs', latencyMs);
@@ -569,6 +575,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.electronAPI && window.electronAPI.onAutoSendChanged) {
         window.electronAPI.onAutoSendChanged((autoSendState) => {
             const { enabled, latencyMs } = autoSendState;
+
+            // Update state manager with auto-send enabled state
+            stateManager.set('autoSendEnabled', enabled);
 
             // Update latency in state and data sender
             if (latencyMs && latencyMs !== stateManager.get('sendLatencyMs')) {
