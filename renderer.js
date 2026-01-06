@@ -16,6 +16,7 @@ import commandButtonsManager from './renderer/controls/command-buttons.js';
 import powerSwitchesManager from './renderer/controls/power-switches.js';
 import joystickControl, { COMMANDS } from './renderer/controls/joystick-control.js';
 import sliderControl from './renderer/controls/slider-control.js';
+import tensionInputHandler from './renderer/controls/tension-input-handler.js';
 
 // Import settings and UI modules
 import settingsManager from './renderer/settings/settings-manager.js';
@@ -427,6 +428,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupInputListeners();
     joystickControl.init();
     sliderControl.init();
+    tensionInputHandler.init();
     xyzStatusUpdater.init();
 
     // ========== UNIFIED STATE INITIALIZATION ==========
