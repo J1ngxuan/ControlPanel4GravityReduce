@@ -57,6 +57,7 @@ const LOCALES = {
         precisionAlign: 'Precision Align',
         tensionSetting: 'Tension Setting',
         tensionReset: 'Tension Reset',
+        tensionReading: 'Reading:',
 
         // Emergency Stops
         emergencyStops: 'Emergency Stops',
@@ -296,6 +297,7 @@ const LOCALES = {
         precisionAlign: '精密对准',
         tensionSetting: '张力设置',
         tensionReset: '张力复位',
+        tensionReading: '读数:',
 
         // Emergency Stops
         emergencyStops: '紧急停止',
@@ -452,31 +454,31 @@ const LOCALES = {
 
         // Command names
         commands: {
-            1: '1-开始实验',
-            2: '2-停止实验',
-            3: '3-驱动器电源开',
-            4: '4-驱动器电源关',
-            5: '5-伺服模块开',
-            6: '6-伺服模块关',
-            7: '7-X+',
-            8: '8-X-',
-            9: '9-Y+',
-            10: '10-Y-',
-            11: '11-Z+',
-            12: '12-Z-',
-            13: '13-X位置移动',
-            14: '14-停止X轴',
-            15: '15-Y位置移动',
-            16: '16-停止Y轴',
-            17: '17-Z位置移动',
-            18: '18-停止Z轴',
-            19: '19-停止XYZ',
-            20: '20-XY位置移动',
-            21: '21-精密对准',
-            22: '22-拉力设置',
-            23: '23-紧急停止 + 清除脉冲',
-            24: '24-拉力归零',
-            30: '30-清除故障'
+            1: '开始实验',
+            2: '停止实验',
+            3: '驱动器电源开',
+            4: '驱动器电源关',
+            5: '伺服模块开',
+            6: '伺服模块关',
+            7: 'X+',
+            8: 'X-',
+            9: 'Y+',
+            10: 'Y-',
+            11: 'Z+',
+            12: 'Z-',
+            13: 'X位置移动',
+            14: '停止X轴',
+            15: 'Y位置移动',
+            16: '停止Y轴',
+            17: 'Z位置移动',
+            18: '停止Z轴',
+            19: '停止XYZ',
+            20: 'XY位置移动',
+            21: '精密对准',
+            22: '拉力设置',
+            23: '紧急停止 + 清除脉冲',
+            24: '拉力归零',
+            30: '清除故障'
         }
     }
 };

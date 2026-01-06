@@ -1034,6 +1034,37 @@ h3 {
     flex-shrink: 0;
 }
 
+.tension-reading-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    min-width: 120px;
+}
+
+.tension-reading-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent-primary);
+    min-width: 60px;
+    text-align: right;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.tension-reading-unit {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.tension-target-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
 /* Current Command Display */
 .current-command-display {
     background: var(--bg-tertiary);

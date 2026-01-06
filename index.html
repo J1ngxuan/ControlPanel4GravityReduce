@@ -106,10 +106,17 @@
                             <button class="btn btn-command" data-cmd="21" data-name="Precision Align" data-i18n="precisionAlign" disabled>Precision Align</button>
                         </div>
                         <div class="tension-control-row">
-                            <label data-i18n="targetTension">Target Tension:</label>
-                            <input type="number" id="tension-input-n" class="tension-target-input" value="0" min="0" max="655.35" step="0.01">
-                            <span class="unit-hint" data-i18n="unitN">N</span>
-                            <input type="hidden" id="int-6" value="0">
+                            <div class="tension-reading-group">
+                                <label data-i18n="tensionReading">Reading:</label>
+                                <span class="tension-reading-value" id="tension-reading-n">0</span>
+                                <span class="tension-reading-unit" data-i18n="unitN">N</span>
+                            </div>
+                            <div class="tension-target-group">
+                                <label data-i18n="targetTension">Target Tension:</label>
+                                <input type="number" id="tension-input-n" class="tension-target-input" value="0" min="0" max="655.35" step="0.01">
+                                <span class="unit-hint" data-i18n="unitN">N</span>
+                                <input type="hidden" id="int-6" value="0">
+                            </div>
                             <button class="btn btn-command" data-cmd="22" data-name="Tension Setting" data-i18n="tensionSetting" disabled>Tension Setting</button>
                             <button class="btn btn-command" data-cmd="24" data-name="Tension Reset" data-i18n="tensionReset" disabled>Tension Reset</button>
                         </div>

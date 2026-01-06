@@ -2,6 +2,7 @@
  * Tension Input Handler
  * Converts user-friendly Newton (N) input to int-6 value (×100)
  * e.g., 100 N input → int-6 = 10000
+ * Also displays tension reading (int[8]) converted to N
  */
 
 import eventBus, { Events } from '../core/event-bus.js';
@@ -11,7 +12,9 @@ class TensionInputHandler {
     constructor() {
         this.tensionInputN = null;
         this.int6Hidden = null;
-        this.CONVERSION_FACTOR = 100; // int-6 = N × 100
+        this.tensionReadingDisplay = null;
+        this.CONVERSION_FACTOR = 100; // int value = N × 100
+        this.TENSION_READING_INDEX = 8; // int[8] is tension reading
     }
 
     /**
@@ -20,12 +23,20 @@ class TensionInputHandler {
     init() {
         this.tensionInputN = document.getElementById('tension-input-n');
         this.int6Hidden = document.getElementById('int-6');
+        this.tensionReadingDisplay = document.getElementById('tension-reading-n');
 
+        // Check if we have at least the target input (main window)
         if (!this.tensionInputN || !this.int6Hidden) {
-            return; // Not on a page with tension input
+            // Check if we only have the reading display (could be on a different page)
+            if (this.tensionReadingDisplay) {
+                this.setupDataListener();
+                logger.info('Tension reading display initialized');
+            }
+            return;
         }
 
         this.setupEventListeners();
+        this.setupDataListener();
 
         // Initial sync from localStorage/int-6 to N display
         this.loadAndDisplayN();
@@ -34,7 +45,7 @@ class TensionInputHandler {
     }
 
     /**
-     * Set up event listeners
+     * Set up event listeners for target input
      */
     setupEventListeners() {
         // When user changes the N input, update hidden int-6
@@ -52,6 +63,31 @@ class TensionInputHandler {
         eventBus.on(Events.SETTINGS_LOADED, () => {
             this.loadAndDisplayN();
         });
+    }
+
+    /**
+     * Set up listener for received data to update tension reading
+     */
+    setupDataListener() {
+        eventBus.on(Events.DATA_RECEIVED, (eventData) => {
+            // Event passes { data: { bools, ints } }
+            const data = eventData?.data;
+            if (data && data.ints && data.ints.length > this.TENSION_READING_INDEX) {
+                this.updateTensionReading(data.ints[this.TENSION_READING_INDEX]);
+            }
+        });
+    }
+
+    /**
+     * Update the tension reading display
+     * @param {number} rawValue - Raw int value from PLC (×100)
+     */
+    updateTensionReading(rawValue) {
+        if (!this.tensionReadingDisplay) return;
+
+        const nValue = rawValue / this.CONVERSION_FACTOR;
+        // Display with 2 decimal places, or whole number if no decimals
+        this.tensionReadingDisplay.textContent = nValue % 1 === 0 ? nValue : nValue.toFixed(2);
     }
 
     /**
